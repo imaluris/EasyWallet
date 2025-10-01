@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/form.css">
+
+</head>
+<body>
+  <div class="container">
+    <div class="card-form">
+    <!--<h1>Registrer</h1>-->
+
+     <form id="registerForm">
+      <!-- STEP 1 -->
+      <div class="step active" id="step1">
+        <label for="first_name">Name:</label><br>
+        <input type="text" id="first_name" name="first_name" required><br><br>
+
+        <label for="last_name">Last name:</label><br>
+        <input type="text" id="last_name" name="last_name" required><br><br>
+
+        <label for="date">Birth date:</label><br>
+        <input type="date" id="date" name="date"><br><br>
+        
+        <label for="address">Address:</label><br>
+        <input type="text" id="address" name="address"><br><br>
+
+        <button type="button" id="nextBtn">Next</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="step2">
+
+        <label for="phone">Phone:</label><br>
+        <input type="number" id="phone" name="phone" required><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="text" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="confirmPassword">Confirm password:</label><br>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+
+        <button type="button" id="backBtn">Back</button>
+        <button type="submit">Submit</button>
+      </div>
+    </div>
+    </form>
+
+    <p id="message"></p>
+  </div>
+
+  <script src="../js/register.js"></script>
+</body>
+</html>

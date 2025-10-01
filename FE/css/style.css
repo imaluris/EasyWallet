@@ -1,0 +1,84 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;  /* prende tutta l’altezza dello schermo */
+  margin: 0;
+  background-color: #FAF9F6;
+  font-family: Arial, sans-serif;
+  width: 100vw;
+  margin:0;
+  
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  align-items: center;            /* centra verticalmente logo e menu */
+  justify-content: center;        /* centra orizzontalmente logo + menu */
+  background-color: #1E3A8A;
+  color: white;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  margin-right: 40px; /* spazio tra logo e menu */
+}
+
+.navbar .menu {
+  display: flex; /* menu in orizzontale */
+  align-items: center;  /* centra verticalmente i blocchi */
+}
+
+.navbar .menu a {
+  display: flex;             /* rende l'intero blocco cliccabile */
+  align-items: center;       /* centra il testo verticalmente */
+  justify-content: center;   /* centra il testo orizzontalmente */
+  width: 120px;              /* larghezza blocco cliccabile */
+  height: 60px;              /* altezza della navbar */
+  color: white;
+  text-decoration: none;
+  transition: background 0.5s;
+}
+
+.navbar .menu a:hover {
+  background-color: #555;
+}
+
+header{
+  display: flex;
+  justify-content: center; /* centra orizzontalmente */
+  align-items: center;     /* centra verticalmente */
+  height: 25vh;  
+}
+
+.space-header{
+  background-color: #2B3A67;
+  width: 70%;
+  height: 100%; /* prende tutta l’altezza dell’header */
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-image: url("../assets/logo.png"); /* percorso relativo al file CSS */
+  background-size:50%;        /* riempie l'intero elemento, ritagliando se necessario */
+  background-position: center;   /* centra l'immagine */
+  background-repeat: no-repeat;
+}
+
+
+.container{
+  flex: 1; /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  justify-content: center;
+  align-items: center;    /* centro orizzontale */
+  height: 75vh;          /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+/* Contenuto principale */
+#main-content {
+  margin-top: 60px; /* lascia spazio alla navbar */
+  padding-top: 20px;
+}
