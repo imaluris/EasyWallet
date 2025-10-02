@@ -3,11 +3,9 @@ body {
   flex-direction: column;
   min-height: 100vh;  /* prende tutta l’altezza dello schermo */
   margin: 0;
-  background-color: #FAF9F6;
+  background-color: #ffffff;
   font-family: Arial, sans-serif;
   width: 100vw;
-  margin:0;
-  
 }
 
 /* Navbar */
@@ -15,7 +13,7 @@ body {
   display: flex;
   align-items: center;            /* centra verticalmente logo e menu */
   justify-content: center;        /* centra orizzontalmente logo + menu */
-  background-color: #1E3A8A;
+  background-color: #2b4cb1;
   color: white;
   height: 60px;
   position: fixed;
@@ -52,19 +50,47 @@ header{
   display: flex;
   justify-content: center; /* centra orizzontalmente */
   align-items: center;     /* centra verticalmente */
-  height: 25vh;  
+  height: 45vh;  
 }
 
-.space-header{
-  background-color: #2B3A67;
+.bar-fixed{
+  background-color: #2b4cb1;
+  position: fixed;
+  width: 100%;
+  height: 20vh;
+}
+
+.space-header {
+  position: relative;
   width: 70%;
-  height: 100%; /* prende tutta l’altezza dell’header */
+  height: 100%;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-image: url("../assets/logo.png"); /* percorso relativo al file CSS */
-  background-size:50%;        /* riempie l'intero elemento, ritagliando se necessario */
-  background-position: center;   /* centra l'immagine */
+  background-color: #2B3A67;
+  background-image: url("../assets/backopa.png");
+  background-position: center;
   background-repeat: no-repeat;
+}
+
+.space-header .overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none; /* lascia interagire con gli elementi sotto */
+}
+
+.overlay-image {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: auto;
+  z-index: 2
 }
 
 

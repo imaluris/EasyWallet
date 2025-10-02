@@ -1,0 +1,65 @@
+.card-form{
+    background-color: #FFFFFF;
+    width: 45%;
+    height: 70%;
+    border-radius: 20px;
+
+}
+
+#loginForm{
+  display: flex;
+  flex-direction: column; /* mantiene gli elementi in colonna */
+  justify-content: center; /* centro verticale */
+  align-items: center;    /* centro orizzontale */
+  height: 100%;
+}
+
+
+
+h1{
+  margin:0;
+  padding:0;
+}
+
+h5{
+  color:#6b6a6a;
+  margin-top:1%;
+  margin-bottom:5%;
+  padding:0;
+}
+
+input{
+  width: 400px;
+  font-size: 16px;         /* aumenta la dimensione del testo */
+  line-height: 35px;       /* forza l’altezza interna */
+  padding: 0 10px;         /* padding solo orizzontale */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  
+  -webkit-appearance: none; /* Safari/Chrome reset */
+  -moz-appearance: none;    /* Firefox reset */
+  appearance: none;
+}
+
+button{
+    background-color: #2b4cb1;
+    font-weight: bold;
+    color: #FFFFFF;
+    border-radius: 5px;
+    width: 400px;
+    line-height: 35px;       /* forza l’altezza interna */
+}
+
+button:hover{
+    background-color: #0b33ac;
+}
+
+/* Regole per il form di registrazione in due step */
+.step { 
+    display: none; 
+  }
+
+.step.active { 
+    display: block; 
+  }

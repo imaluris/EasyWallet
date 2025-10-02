@@ -5,26 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/form.css">
+  <link rel="stylesheet" href="css/loginForm.css">
 </head>
 <body>
+  <div class="bar-fixed"></div>
   <header>
+    
     <div class="space-header">
+        <div class="overlay"></div>
+
+          <img src="../assets/logow.png" class="overlay-image" />
     </div>
   </header>
     <div class="container">
         <div class="card-form">
           <form id="loginForm">
-            <h1>Login</h1>
-            <label for="email">Email:</label><br>
-            <input type="text" id="email" name="email" required><br>
+            <h1>Accedi ora</h1>
+            <h5>Inserisci le credenziali di accesso inserite in fase registrazione</h5>
+            <!--<label for="email">Email:</label><br>-->
+            <input type="text" placeholder="Email" id="email" name="email" required><br>
 
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password" required><br>
+            <!--<label for="password">Password:</label><br>-->
+            <input type="password" placeholder="Password" id="password" name="password" required><br>
 
             <button type="submit">ACCEDI</button>
 
-            <p>Non sei ancora registrato? <a href="pages/register.html">Clicca qui!</a></p>
+          <h5>Non hai un account? <a href="pages/register.html">Registrati!</a></h5>
           </form>
         </div>
         <p id="message"></p>

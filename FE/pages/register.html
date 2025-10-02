@@ -1,54 +1,79 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/form.css">
+  <link rel="stylesheet" href="../css/registerForm.css">
 
 </head>
+
 <body>
+  <div class="overlay"></div>
   <div class="container">
+
     <div class="card-form">
-    <!--<h1>Registrer</h1>-->
 
-     <form id="registerForm">
-      <!-- STEP 1 -->
-      <div class="step active" id="step1">
-        <label for="first_name">Name:</label><br>
-        <input type="text" id="first_name" name="first_name" required><br><br>
+      <form id="registerForm">
+        <div class="first-row">
+          <h1>Registrati</h1>
+          <h5>Inserisci i tuoi dati e procedi con la registrazione</h5>
+        </div>
+        <div class="second-row">
+          <!-- STEP 1 -->
+          <div class="step active" id="step1">
+            <h2>Credenziali di accesso</h2>
+            <div class="input-row">
+              <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
 
-        <label for="last_name">Last name:</label><br>
-        <input type="text" id="last_name" name="last_name" required><br><br>
+              <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
+            </div>
 
-        <label for="date">Birth date:</label><br>
-        <input type="date" id="date" name="date"><br><br>
-        
-        <label for="address">Address:</label><br>
-        <input type="text" id="address" name="address"><br><br>
+            <div class="input-row">
+              <input type="date" placeholder="Data di nascita" id="date" name="date">
 
-        <button type="button" id="nextBtn">Next</button>
-      </div>
+              <input type="text" placeholder="Indirizzo" id="address" name="address">
+            </div>
 
-      <!-- STEP 2 -->
-      <div class="step" id="step2">
 
-        <label for="phone">Phone:</label><br>
-        <input type="number" id="phone" name="phone" required><br><br>
+            <div class="button-row">
+              <button type="button" id="backToLogin">Torna al login</button>
+              <button type="button" id="nextBtn">Avanti</button>
+            </div>
 
-        <label for="email">Email:</label><br>
-        <input type="text" id="email" name="email" required><br><br>
+          </div>
 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+          <!-- STEP 2 -->
+          <div class="step" id="step2">
+            <h2>Dati anagrafici</h2>
+            <div class="input-row">
+              <input type="number" placeholder="Telefono" id="phone" name="phone" required>
 
-        <label for="confirmPassword">Confirm password:</label><br>
-        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+              <input type="text" placeholder="Email" id="email" name="email" required>
+            </div>
 
-        <button type="button" id="backBtn">Back</button>
-        <button type="submit">Submit</button>
-      </div>
+
+            <div class="input-row">
+              <input type="password" placeholder="Password" id="password" name="password" required>
+
+              <input type="password" placeholder="Conferma password" id="confirmPassword" name="confirmPassword"
+                required>
+            </div>
+
+            <div class="button-row">
+
+
+              <button type="button" id="backBtn">Indietro</button>
+              <button type="submit">Invia</button>
+            </div>
+
+          </div>
+        </div>
+        <div class="third-row">
+
+        </div>
+
     </div>
     </form>
 
@@ -57,4 +82,5 @@
 
   <script src="../js/register.js"></script>
 </body>
+
 </html>
