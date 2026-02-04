@@ -1,12 +1,72 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="css/statistics.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    <h1>QUESTE SONO LE STATISTICHE</h1>
+
+<body class="statistics">
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"></div>
+    <nav class="menu">
+      <a class="navbar-item" href="dashboard.html">Home</a>
+      <a class="navbar-item" href="transactions.html">Transazioni</a>
+      <a class="navbar-item" href="statistics.html">Statistiche</a>
+      <a class="navbar-item" href="profile.html">Profilo</a>
+    </nav>
+  </header>
+  <!-- Main-content -->
+
+  <main>
+    <div class="overlay"></div>
+    <div class="container">
+      
+      <div id="cards-list">
+        <template id="card-template">
+          <div class="card-income">
+            <div class="first-row">
+              <img src="" alt="categoria">
+            </div>
+            <div class="second-row">
+              <span class="category">
+            </div>
+            <div class="third-row">
+              <span class="income">
+            </div>
+            <div class="fourth-row">
+              <span class="currency">
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="row">
+        <h3>Entrate/Uscite dell'anno</h3>
+        <div class="chart-container">
+          <canvas id="firstChart"></canvas>
+        </div>
+      </div>
+      <div class="row">
+        <h3>Balance trend grafico</h3>
+        <div class="chart-container">
+          <canvas id="secondChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="../js/statistics.js"></script>
+
 </body>
+
 </html>

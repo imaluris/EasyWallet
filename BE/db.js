@@ -5,7 +5,7 @@ const mysql = require('mysql2');
 const pool = mysql.createPool({
   host: 'localhost',      // indirizzo del DB
   user: 'root',           // utente DB
-  password: '',   // password DB
+  password: 'Roland1993?',   // password DB
   database: 'EasyWalletDB' // nome del DB che hai creato
 });
 

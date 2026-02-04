@@ -27,19 +27,22 @@ form.addEventListener('submit', async (e) => {
   const birth_date = document.getElementById('date').value;
   const phone = document.getElementById('phone').value;
   const address = document.getElementById('address').value;
+  const city = document.getElementById('city').value;
+  const cap = document.getElementById('cap').value;
+  const province = document.getElementById('province').value;
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
 
   try {
     if (password !== confirmPassword) {
-        alert("Le password non coincidono!");
-        return false; // blocca il submit
+      alert("Le password non coincidono!");
+      return false; // blocca il submit
     }
-    const response = await fetch('http://localhost:3000/auth/register', {
+    const response = await fetch('http://192.168.1.111:3000/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ first_name, last_name, birth_date, phone, address, email, password, confirmPassword })
+      body: JSON.stringify({ first_name, last_name, birth_date, phone, address, city, cap, province, email, password, confirmPassword })
     });
 
     const data = await response.json();

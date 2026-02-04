@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/loginForm.css">
 </head>
-<body>
+
+<body class="login">
   <div class="bar-fixed"></div>
   <header>
-    
-    <div class="space-header">
-        <div class="overlay"></div>
 
-          <img src="../assets/logow.png" class="overlay-image" />
+    <div class="space-header">
+      <div class="overlay"></div>
+
+      <img src="../assets/logow.png" class="overlay-image" />
     </div>
   </header>
+  <main>
     <div class="container">
-        <div class="card-form">
-          <form id="loginForm">
-            <h1>Accedi ora</h1>
-            <h5>Inserisci le credenziali di accesso inserite in fase registrazione</h5>
-            <!--<label for="email">Email:</label><br>-->
-            <input type="text" placeholder="Email" id="email" name="email" required><br>
+      <div class="card-form">
+        <form id="loginForm">
+          <h1>Accedi ora</h1>
+          <h5>Inserisci le credenziali di accesso inserite in fase registrazione</h5>
+          <!--<label for="email">Email:</label><br>-->
+          <input type="text" placeholder="Email" id="email" name="email" required><br>
 
-            <!--<label for="password">Password:</label><br>-->
-            <input type="password" placeholder="Password" id="password" name="password" required><br>
+          <!--<label for="password">Password:</label><br>-->
+          <input type="password" placeholder="Password" id="password" name="password" required><br>
 
-            <button type="submit">ACCEDI</button>
+          <button type="submit">ACCEDI</button>
 
           <h5>Non hai un account? <a href="pages/register.html">Registrati!</a></h5>
-          </form>
-        </div>
-        <p id="message"></p>
+        </form>
       </div>
+      <p id="message"></p>
+    </div>
+  </main>
+
 
   <script src="js/login.js"></script>
 </body>
+
 </html>

@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="../css/registerForm.css">
+  <link rel="stylesheet" href="../css/style.css">
 
 </head>
 
-<body>
+<body class="register">
   <div class="overlay"></div>
   <div class="container">
 
@@ -24,18 +24,16 @@
           <!-- STEP 1 -->
           <div class="step active" id="step1">
             <h2>Credenziali di accesso</h2>
-            <div class="input-row">
-              <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
 
-              <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
+            <div class="input-row">
+              <input type="text" placeholder="Email" id="email" name="email" required>
             </div>
 
             <div class="input-row">
-              <input type="date" placeholder="Data di nascita" id="date" name="date">
-
-              <input type="text" placeholder="Indirizzo" id="address" name="address">
+              <input type="password" placeholder="Password" id="password" name="password" required>
+              <input type="password" placeholder="Conferma password" id="confirmPassword" name="confirmPassword"
+                required>
             </div>
-
 
             <div class="button-row">
               <button type="button" id="backToLogin">Torna al login</button>
@@ -47,23 +45,28 @@
           <!-- STEP 2 -->
           <div class="step" id="step2">
             <h2>Dati anagrafici</h2>
-            <div class="input-row">
-              <input type="number" placeholder="Telefono" id="phone" name="phone" required>
 
-              <input type="text" placeholder="Email" id="email" name="email" required>
+            <div class="input-row">
+              <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
+              <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
             </div>
 
+            <div class="input-row">
+              <input type="date" placeholder="Data di nascita" id="date" name="date">
+              <input type="text" placeholder="Indirizzo" id="address" name="address">
+            </div>
 
             <div class="input-row">
-              <input type="password" placeholder="Password" id="password" name="password" required>
+              <input type="text" placeholder="Città" id="city" name="city" required>
+              <input type="number" placeholder="Cap" id="cap" name="cap" required>
+            </div>
 
-              <input type="password" placeholder="Conferma password" id="confirmPassword" name="confirmPassword"
-                required>
+            <div class="input-row">
+              <input type="texy" placeholder="Provincia" id="province" name="province" required>
+              <input type="number" placeholder="Telefono" id="phone" name="phone" required>
             </div>
 
             <div class="button-row">
-
-
               <button type="button" id="backBtn">Indietro</button>
               <button type="submit">Invia</button>
             </div>

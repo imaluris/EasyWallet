@@ -1,0 +1,159 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* prende tutta l’altezza dello schermo */
+    margin: 0;
+    background-color: #2B3A67;
+    font-family: Arial, sans-serif;
+    width: 100vw;
+    background-image: url("../assets/backopa.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+
+body .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+    pointer-events: none;
+    /* lascia interagire con gli elementi sotto */
+}
+
+.container {
+    flex: 1;
+    flex-direction: column;
+    /* prende tutto lo spazio rimasto sotto l’header */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* centro orizzontale */
+    height: 100%;
+    /* serve perché justify-content centri verticalmente */
+    width: 100vw;
+}
+
+.row {
+    background-color: #FFFFFF;
+    width: 70%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    border-radius: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    /* metti elementi in colonna */
+    align-items: center;
+    /* centra orizzontalmente il canvas */
+    text-align: left;
+    /* h4 resta a sinistra */
+}
+
+.row h3 {
+    align-self: flex-start;
+    /* forza h4 allineato a sinistra */
+    max-width: 100%;
+    line-height: 1.4;
+    /* per due righe se necessario */
+    margin: 2%;
+}
+
+#balance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom:2%;
+}
+
+/* --- Modal (nascosta di default) --- */
+.modal {
+    display: none;
+    /* nascosta */
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+}
+
+/* --- Contenuto della modal --- */
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.close-btn {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+}
+
+.modal input,
+.modal select {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.add-btn {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    z-index: 11;
+    margin-bottom: 2%
+}
+
+.label {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #000000;
+
+}
+
+.value {
+    font-size: 2rem;
+    color: #2ecc71;
+    /* verde, per esempio */
+    font-weight: bold;
+}
+
+#myChart {
+    width: 24% !important;
+    height: 24% !important;
+    display: block;
+    margin-bottom: 1%;
+    /* centra il canvas */
+}

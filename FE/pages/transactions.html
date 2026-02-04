@@ -1,12 +1,90 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="css/transactions.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    <h1>QUESTA E' LISTA TRANSAZIONI</h1>
+
+<body class="transactions">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"></div>
+    <nav class="menu">
+      <a class="navbar-item" href="dashboard.html">Home</a>
+      <a class="navbar-item" href="transactions.html">Transazioni</a>
+      <a class="navbar-item" href="statistics.html">Statistiche</a>
+      <a class="navbar-item" href="profile.html">Profilo</a>
+    </nav>
+  </header>
+
+  <!-- Main-content -->
+  <main>
+    <div class="overlay"></div>
+
+    <div class="container">
+      <div class="filters">
+        <select id="filter-type">
+          <option value="">Tutti</option>
+          <option value="income">Entrate</option>
+          <option value="expense">Uscite</option>
+        </select>
+
+        <select id="filter-category">
+          <option value="">Tutte</option>
+          <option value="benessere">Benessere</option>
+          <option value="casa">Casa</option>
+        </select>
+
+        <input type="date" id="filter-start">
+        <input type="date" id="filter-end">
+
+        <button id="apply-filters">Filtra</button>
+      </div>
+
+      <div class="row">
+        <div class="transactions-container">
+          <h2>Le tue transazioni</h2>
+          <div id="list"></div>
+
+          <template id="transaction-template">
+            <div class="transaction">
+              <div class="delete-overlay" style="display:none;">
+                <button class="delete-btn">🗑️</button>
+              </div>
+              <div class="row-top">
+                <div class="date">
+                  <span class="day"></span>
+                  <div class="month-time">
+                    <span class="month"></span>
+                    <span class="time"></span>
+                  </div>
+                </div>
+                <div class="icon">
+                  <img src="" alt="categoria">
+                </div>
+              </div>
+              <hr>
+              <div class="row-bottom">
+                <span class="description"></span>
+                <span class="amount"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
+  </footer>
+
+  <script src="../js/transactions.js"></script>
+
 </body>
+
 </html>

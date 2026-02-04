@@ -1,12 +1,106 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    <h1>QUESTO E' IL PROFILO</h1>
+
+<body class="profile">
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"></div>
+    <nav class="menu">
+      <a class="navbar-item" href="dashboard.html">Home</a>
+      <a class="navbar-item" href="transactions.html">Transazioni</a>
+      <a class="navbar-item" href="statistics.html">Statistiche</a>
+      <a class="navbar-item" href="profile.html">Profilo</a>
+    </nav>
+  </header>
+
+  <!--MODAL PER MODIFICA PASSWORD-->
+  <div id="modifyPsw-modal" class="hidden">
+    <div class="modal-content">
+      <form id="change-password-form">
+        <p>Inserisci la password attuale</p>
+        <input type="password" placeholder="Password Attuale" id="current-psw" name="current-psw" required>
+        <p>Inserisci la nuova password</p>
+        <input type="password" placeholder="Nuova Password" id="new-psw" name="new-psw" required>
+        <input type="password" placeholder="Conferma Password" id="confirm-new-psw" name="confirm-new-psw" required>
+        <button type="submit" id="confirm-password">Conferma</button>
+        <button type="button" id="cancel-password">Annulla</button>
+        <div id="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!--MODAL PER MODIFICA PROFILO-->
+  <div id="modifyProfile-modal" class="hidden">
+    <div class="modal-content">
+      <form id="modify-profile-form">
+        <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
+        <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
+        <input type="date" placeholder="Data di nascita" id="birth_date" name="birth_date" required>
+        <input type="text" placeholder="Indirizzo" id="address" name="address" required>
+        <input type="text" placeholder="Città" id="city" name="city" required>
+        <input type="text" placeholder="Cap" id="cap" name="cap" required>
+        <input type="text" placeholder="Provincia" id="province" name="province" required>
+        <input type="text" placeholder="Telefono" id="phone" name="phone" required>
+        <button type="submit" id="confirm-modify-profile">Conferma</button>
+        <button type="button" id="cancel-modify-profile">Annulla</button>
+        <div id="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!--MODAL PER LOGOUT-->
+  <div id="logout-modal" class="hidden">
+    <div class="modal-content">
+      <p>Sei sicuro di voler uscire?</p>
+      <button id="confirm-logout">Sì</button>
+      <button id="cancel-logout">Annulla</button>
+    </div>
+  </div>
+
+  <!--MODAL PER ELIMINA PROFILO-->
+  <div id="delete-modal" class="hidden">
+    <div class="modal-content">
+      <p>Sei sicuro di voler eliminare il profilo?</p>
+      <button id="confirm-delete">Sì</button>
+      <button id="cancel-delete">Annulla</button>
+    </div>
+  </div>
+
+  <!-- Main-content -->
+  <main>
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div id="avatar"></div>
+        <hr>
+        <h1 id="full_name"></h1>
+        <hr>
+        <h1 id="email"></h1>
+      </div>
+
+      <div class="row">
+        <button id="changePsw-btn" class="menu-profile-btn">Modifica password</button>
+        <button id="changeProfile-btn" class="menu-profile-btn">Modifica profilo</button>
+        <button id="logout-btn" class="menu-profile-btn">Logout</button>
+        <button id="deleteProfile-btn" class="menu-profile-btn">Elimina profilo</button>
+      </div>
+
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
+  </footer>
+  <script src="../js/profile.js"></script>
 </body>
+
 </html>

@@ -1,66 +1,49 @@
-body {
+body.login {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;  /* prende tutta l’altezza dello schermo */
+  max-height: 100vh;
+  /* prende tutta l’altezza dello schermo */
   margin: 0;
   background-color: #ffffff;
   font-family: Arial, sans-serif;
   width: 100vw;
 }
 
-/* Navbar */
-.navbar {
+body.transactions,
+body.statistics,
+body.profile,
+body.dashboard,
+body.register {
   display: flex;
-  align-items: center;            /* centra verticalmente logo e menu */
-  justify-content: center;        /* centra orizzontalmente logo + menu */
-  background-color: #2b4cb1;
-  color: white;
-  height: 60px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
+  flex-direction: column;
+  height: 100vh;
+  /* prende tutta l’altezza dello schermo */
+  margin: 0;
+  background-color: #2B3A67;
+  font-family: Arial, sans-serif;
+  width: 100vw;
+  background-image: url("../assets/backopa.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
 
-.navbar .logo {
-  margin-right: 40px; /* spazio tra logo e menu */
-}
-
-.navbar .menu {
-  display: flex; /* menu in orizzontale */
-  align-items: center;  /* centra verticalmente i blocchi */
-}
-
-.navbar .menu a {
-  display: flex;             /* rende l'intero blocco cliccabile */
-  align-items: center;       /* centra il testo verticalmente */
-  justify-content: center;   /* centra il testo orizzontalmente */
-  width: 120px;              /* larghezza blocco cliccabile */
-  height: 60px;              /* altezza della navbar */
-  color: white;
-  text-decoration: none;
-  transition: background 0.5s;
-}
-
-.navbar .menu a:hover {
-  background-color: #555;
-}
-
-header{
+/*PAGINA LOGIN*/
+.login header {
   display: flex;
-  justify-content: center; /* centra orizzontalmente */
-  align-items: center;     /* centra verticalmente */
-  height: 45vh;  
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
 }
 
-.bar-fixed{
+.login .bar-fixed {
   background-color: #2b4cb1;
   position: fixed;
   width: 100%;
   height: 20vh;
 }
 
-.space-header {
+.login .space-header {
   position: relative;
   width: 70%;
   height: 100%;
@@ -72,18 +55,20 @@ header{
   background-repeat: no-repeat;
 }
 
-.space-header .overlay {
+.login .space-header .overlay {
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
-  pointer-events: none; /* lascia interagire con gli elementi sotto */
+  /* lascia interagire con gli elementi sotto */
 }
 
-.overlay-image {
+.login .overlay-image {
   position: absolute;
   top: 65%;
   left: 50%;
@@ -93,18 +78,1292 @@ header{
   z-index: 2
 }
 
-
-.container{
-  flex: 1; /* prende tutto lo spazio rimasto sotto l’header */
+.login .container {
+  flex: 1;
+  /* prende tutto lo spazio rimasto sotto l’header */
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;    /* centro orizzontale */
-  height: 75vh;          /* serve perché justify-content centri verticalmente */
+  align-items: center;
+  /* centro orizzontale */
+  height: 60vh;
+  /* serve perché justify-content centri verticalmente */
   width: 100vw;
 }
 
-/* Contenuto principale */
-#main-content {
-  margin-top: 60px; /* lascia spazio alla navbar */
-  padding-top: 20px;
+.login .card-form {
+  background-color: #FFFFFF;
+  width: 45%;
+  height: 70%;
+  border-radius: 20px;
+
+}
+
+.login #loginForm {
+  display: flex;
+  flex-direction: column;
+  /* mantiene gli elementi in colonna */
+  justify-content: center;
+  /* centro verticale */
+  align-items: center;
+  /* centro orizzontale */
+  height: 100%;
+}
+
+.login h1 {
+  margin: 0;
+  padding: 0;
+}
+
+.login h5 {
+  color: #6b6a6a;
+  margin-top: 1%;
+  margin-bottom: 5%;
+  padding: 0;
+  text-align: center;
+}
+
+
+.login button {
+  width: 70%;
+  max-width: 400px;
+  margin: 0;
+  /* niente margin che rompe il layout */
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: #2b4cb1;
+  color: #fff;
+  font-weight: 700;
+}
+
+.login button:hover {
+  min-width: 140px;
+  margin: 0;
+  /* niente margin che rompe il layout */
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: #0d34a8;
+  color: #fff;
+  font-weight: 700;
+}
+
+.login input {
+  width: 100%;
+  max-width: 400px;
+  font-size: 16px;
+  /* aumenta la dimensione del testo */
+  line-height: 35px;
+  /* forza l’altezza interna */
+  padding: 0 10px;
+  /* padding solo orizzontale */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+
+  -webkit-appearance: none;
+  /* Safari/Chrome reset */
+  -moz-appearance: none;
+  /* Firefox reset */
+  appearance: none;
+}
+
+/*PAGINA DASHBOARD*/
+
+.dashboard .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none;
+  /* lascia interagire con gli elementi sotto */
+}
+
+
+.dashboard .row {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 60%;
+  max-width: 500px;
+  padding: 0.5% 0.5% 0.5% 0.5%;
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+
+  /* metti elementi in colonna */
+  align-items: center;
+  /* centra orizzontalmente il canvas */
+  text-align: left;
+  box-shadow: 20px 14px 12px 0px rgb(0 0 0 / 30%);
+  /* h4 resta a sinistra */
+}
+
+.dashboard .container {
+  height: 88vh;
+
+  /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3%;
+  /* centro orizzontale */
+  /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+.dashboard .month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  position: relative;
+  width: 100%;
+}
+
+.dashboard .arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  transition: transform 0.2s;
+  position: absolute;
+}
+
+.dashboard #prev {
+  left: 10px;
+}
+
+.dashboard #next {
+  right: 10px;
+}
+
+.dashboard .arrow:hover {
+  transform: scale(1.2);
+}
+
+.dashboard #balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+#cards-list{
+  display: flex;
+  gap: 10px;;
+}
+
+#cards-list .card {
+  position: relative;
+  z-index: 10;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.card .first-row,
+.card .second-row{
+    padding: 20px;
+
+}
+
+.card h3{
+  margin:0;
+}
+
+/* --- Modal (nascosta di default) --- */
+.dashboard .modal {
+  display: none;
+  /* nascosta */
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 15;
+}
+
+/* --- Contenuto della modal --- */
+.dashboard .modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard .modal-content h2 {
+  margin-top: 0;
+}
+
+.dashboard .close-btn {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+}
+
+.dashboard .modal input,
+.dashboard .modal select {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dashboard .submit-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.dashboard .add-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 1%;
+  margin-top: 1%;
+  width: 100%;
+}
+
+.dashboard .label {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000000;
+
+}
+
+.dashboard .value {
+  font-size: 2rem;
+  color: #2ecc71;
+  /* verde, per esempio */
+  font-weight: bold;
+}
+
+.dashboard #myChart {
+  width: 80% !important;
+  height: 80% !important;
+  display: block;
+  margin-bottom: 1%;
+  /* centra il canvas */
+}
+
+.dashboard .transactions-container {
+
+  justify-content: center;
+  /* così i figli prendono tutta la larghezza */
+  width: 100%;
+
+}
+
+.dashboard #list {
+  width: 100%;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center !important;
+}
+
+.dashboard .transaction {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: #fff;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard .transaction .row-top,
+.dashboard .transaction .row-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard .date {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dashboard .day {
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.dashboard .month-time {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.dashboard .icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.dashboard .transaction hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 6px 0;
+}
+
+.dashboard .description {
+  font-style: italic;
+  color: #444;
+}
+
+.dashboard .amount {
+  font-weight: bold;
+}
+
+.dashboard .transaction.income .amount {
+  color: green;
+}
+
+.dashboard .transaction.expense .amount {
+  color: red;
+}
+
+.dashboard .dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.dashboard .left-column,
+.dashboard .right-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3%;
+}
+
+
+
+/* PAGINA TRANSACTIONS */
+
+
+.transactions .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none;
+  /* lascia interagire con gli elementi sotto */
+}
+
+.transactions .container {
+  flex: 1;
+  /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* centro orizzontale */
+  height: 88vh;
+  /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+.transactions .transactions-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  /* così i figli prendono tutta la larghezza */
+  width: 100%;
+  /* o max-width: 800px; se vuoi limite */
+  height: 100%;
+}
+
+
+.transactions .row {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 60%;
+  padding: 0.5% 0.5% 0.5% 0.5%;
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  /* metti elementi in colonna */
+  align-items: center;
+  /* centra orizzontalmente il canvas */
+  text-align: left;
+  box-shadow: 20px 14px 12px 0px rgb(0 0 0 / 30%);
+  /* h4 resta a sinistra */
+}
+
+.transactions .row h3 {
+  align-self: flex-start;
+  /* forza h4 allineato a sinistra */
+  max-width: 100%;
+  line-height: 1.4;
+  margin: 0;
+  /* per due righe se necessario */
+}
+
+.transactions .filters {
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.transactions #list {
+  width: 100%;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center !important;
+}
+
+.transactions .transaction {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: #fff;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.transactions .transaction .row-top,
+.transactions .transaction .row-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactions .date {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.transactions .day {
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.transactions .month-time {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.transactions .icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.transactions .transaction hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 6px 0;
+}
+
+.transactions .description {
+  font-style: italic;
+  color: #444;
+}
+
+.transactions .amount {
+  font-weight: bold;
+}
+
+.transactions .transaction.income .amount {
+  color: green;
+}
+
+.transactions .transaction.expense .amount {
+  color: red;
+}
+
+.transactions .transaction {
+  position: relative;
+}
+
+.transactions .delete-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(37, 87, 250, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.transactions .delete-btn {
+  font-size: 20px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+
+
+/* PAGINA STATISTICHE */
+.statistics .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none;
+  /* lascia interagire con gli elementi sotto */
+}
+
+.statistics .container {
+  flex: 1;
+  /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap:2%;
+  /* centro orizzontale */
+  height: 88vh;
+  /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+
+.statistics .row {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 60%;
+  padding: 0.5% 0.5% 0.5% 0.5%;
+  border-radius: 10px;
+  z-index: 10;
+
+  box-shadow: 20px 14px 12px 0px rgb(0 0 0 / 30%);
+  /* h4 resta a sinistra */
+}
+
+.statistics .month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  position: relative;
+  width: 100%;
+}
+
+.statistics .arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  transition: transform 0.2s;
+  position: absolute;
+}
+
+.statistics #prev {
+  left: 10px;
+}
+
+.statistics #next {
+  right: 10px;
+}
+
+.statistics .arrow:hover {
+  transform: scale(1.2);
+}
+
+.statistics #cards-list {
+  display: flex;
+  /* mette i figli in riga */
+  flex-wrap: wrap;
+  /* se non ci stanno tutti, vanno a capo */
+  gap: 10px;
+  /* spazio tra le card */
+  margin-top: 1%;
+}
+
+.statistics .card-income {
+  z-index: 10;
+  width: 150px;
+  /* o la dimensione che vuoi */
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  ;
+}
+
+.statistics .first-row img {
+  width: 25px;
+  height: 25px;
+}
+
+.statistics .chart-container {
+  margin: auto auto;
+  width: 60%;
+
+}
+
+/* PAGINA DI REGISTRAZIONE*/
+.register .overlay {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: auto;
+  z-index: 2
+}
+
+.register .container {
+  flex: 1;
+  /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* centro orizzontale */
+  height: 75vh;
+  /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+.register .card-form {
+  background-color: #FFFFFF;
+  width: 40vw;
+  border-radius: 20px;
+  z-index: 10;
+  padding: 2%;
+}
+
+.register #registerForm {
+  display: flex;
+  flex-direction: column;
+  /* mantiene gli elementi in colonna */
+  justify-content: center;
+  /* centro verticale */
+  align-items: center;
+  /* centro orizzontale */
+  height: 100%;
+}
+
+
+/* contenitore della riga (ogni "riga" con 2 input) */
+.register .input-row {
+  display: flex;
+  gap: 1rem;
+  /* spazio tra gli input */
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  /* opzionale, mantiene centrato l'insieme */
+
+  margin-bottom: 2%;
+
+}
+
+/* regola mirata: solo gli input dentro .input-row */
+.register .input-row>input {
+  flex: 1 1 48%;
+  /* base ~48% ciascuno, ma possono crescere o restringersi */
+  min-width: 140px;
+  /* non scende sotto questa soglia */
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  line-height: 30px;
+}
+
+/* bottoni affiancati */
+.register .button-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  /* o space-between se vuoi estremi */
+  margin-top: 10%;
+}
+
+.register .button-row>button {
+  flex: 1 1 48%;
+  min-width: 140px;
+  margin: 0;
+  /* niente margin che rompe il layout */
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: #2b4cb1;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* layout generale del form: permetti ai figli di andare a capo quando manca spazio */
+.register #registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  /* importante: figli (input-row) prendono 100% larghezza del container */
+  width: 100%;
+}
+
+
+/* Regole per il form di registrazione in due step */
+.register .step {
+  display: none;
+}
+
+.register .step.active {
+  display: block;
+}
+
+.register h1 {
+  margin: 0;
+  padding: 0;
+  color: #2b4cb1;
+}
+
+.register h2 {
+  color: #2b4cb1;
+}
+
+.register h5 {
+  color: #6b6a6a;
+  margin-top: 1%;
+  margin-bottom: 5%;
+  padding: 0;
+}
+
+.register main {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+
+
+
+/* PAGINA PROFILO */
+
+.profile .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: linear-gradient(to right, rgba(0, 60, 189, 0.5), rgba(0, 1, 53, 0.5));
+  pointer-events: none;
+  /* lascia interagire con gli elementi sotto */
+}
+
+.profile .container {
+  flex: 1;
+  /* prende tutto lo spazio rimasto sotto l’header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap:20%;
+  /* centro orizzontale */
+  height: 88vh;
+  /* serve perché justify-content centri verticalmente */
+  width: 100vw;
+}
+
+
+.profile .row {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 60%;
+  padding: 0.5% 0.5% 0.5% 0.5%;
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  /* metti elementi in colonna */
+  align-items: center;
+  /* centra orizzontalmente il canvas */
+  text-align: left;
+  box-shadow: 20px 14px 12px 0px rgb(0 0 0 / 30%);
+  /* h4 resta a sinistra */
+}
+
+.profile #avatar {
+  z-index: 10;
+  width: 100px;
+  height: 100px;
+  background-color: #2b4cb1;
+  /* blu */
+  color: white;
+  border: 3px solid white;
+  border-radius: 50%;
+  /* rende il div circolare */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile hr {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #ffffff75;
+  margin: 6px 0;
+}
+
+.profile button {
+  width: 100% !important;
+  background-color: #2b4cb1;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-radius: 5px;
+  width: 400px;
+  line-height: 35px;
+}
+
+.profile button:hover {
+  background-color: #0b33ac;
+}
+
+.profile #deleteProfile-btn {
+  background-color: #ac0000;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-radius: 5px;
+  width: 400px;
+  line-height: 35px;
+}
+
+.profile #deleteProfile-btn:hover {
+  background-color: #8b0000;
+}
+
+.profile #logout-modal {
+  z-index: 15;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile #logout-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.profile #delete-modal {
+  z-index: 15;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile #delete-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.profile #modifyPsw-modal {
+  z-index: 15;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile #modifyPsw-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.profile #modifyProfile-modal {
+  z-index: 15;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile #modifyProfile-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.profile .hidden {
+  display: none !important;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  align-items: center;
+  /* centra verticalmente logo e menu */
+  justify-content: center;
+  /* centra orizzontalmente logo + menu */
+  background-color: #2b4cb1;
+  color: white;
+  height: 60px;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  margin-right: 40px;
+  /* spazio tra logo e menu */
+}
+
+.navbar .menu {
+  display: flex;
+  /* menu in orizzontale */
+  align-items: center;
+  /* centra verticalmente i blocchi */
+}
+
+.navbar .menu a {
+  display: flex;
+  /* rende l'intero blocco cliccabile */
+  align-items: center;
+  /* centra il testo verticalmente */
+  justify-content: center;
+  /* centra il testo orizzontalmente */
+  width: 120px;
+  /* larghezza blocco cliccabile */
+  height: 60px;
+  /* altezza della navbar */
+  color: white;
+  text-decoration: none;
+  transition: background 0.5s;
+}
+
+.navbar .menu a:hover {
+  background-color: #555;
+}
+
+/* FOOTER */
+footer {
+  z-index: 10;
+  height: 6vh;
+  margin-top: auto;
+  text-align: center;
+  background-color: #2b4cb1;
+  color: #ffffff;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;      
+  justify-content: center;  
+}
+
+
+/*MEDIAQUERY PER TABLET*/
+@media screen and (max-width: 1024px) {
+
+  /* Navbar */
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .navbar .menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navbar .menu a {
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Pagina di registrazione */
+  .register .card-form {
+    width: 80%;
+  }
+
+  /* PAGINA DASHBOARD */
+  .dashboard .row {
+    width: 70%;
+  }
+
+  .dashboard #cards-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1%;
+  }
+
+  #cards-list .card {
+    background-color: #FFFFFF !important;
+  }
+
+
+  .dashboard #myChart {
+    width: 80% !important;
+    height: 80% !important;
+  }
+}
+
+/* Tablet e smartphone grandi (max 768px) */
+@media screen and (max-width: 768px) {
+  body {
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .login header {
+    height: 35vh;
+  }
+
+  .login .bar-fixed {
+    height: 18vh;
+  }
+
+  .login .space-header {
+    width: 80%;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+
+  .login .space-header .overlay {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+
+  .login .overlay-image {
+    width: 65%;
+    top: 60%;
+  }
+
+  .login .container {
+    height: 65vh;
+  }
+
+  .login .card-form {
+    width: 75%;
+    height: 60%;
+  }
+
+  .login h1 {
+    font-size: 1.8rem;
+    text-align: center;
+
+  }
+
+  .login h5 {
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .login input {
+    max-width: 320px;
+    font-size: 15px;
+  }
+
+  /* Pagina di registrazione */
+  .register .card-form {
+    width: 90%;
+  }
+
+  /* PAGINA DASHBOARD */
+  .dashboard .row {
+    width: 70%;
+
+  }
+
+
+}
+
+/* Smartphone (max 480px) */
+@media screen and (max-width: 480px) {
+  body {
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .login header {
+    height: 24vh;
+  }
+
+  .login .bar-fixed {
+    height: 12vh;
+  }
+
+  .login .space-header {
+    width: 90%;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-size: cover;
+  }
+
+  .login .overlay-image {
+    width: 75%;
+    top: 55%;
+  }
+
+  .login .container {
+    height: 70vh;
+    padding: 0;
+  }
+
+  .login .card-form {
+    width: 90%;
+    height: auto;
+    min-height: 450px;
+    padding: 20px 15px;
+    border-radius: 15px;
+  }
+
+  .login h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .login h5 {
+    font-size: 0.85rem;
+    margin-top: 2%;
+    margin-bottom: 10%;
+    text-align: center;
+  }
+
+  .login input {
+    width: 100%;
+    max-width: 280px;
+    font-size: 14px;
+    line-height: 32px;
+    padding: 0 12px;
+  }
+
+  /* Pagina di registrazione */
+  .register .card-form {
+    width: 90%;
+  }
+
+  /* PAGINA DASHBOARD */
+  .dashboard .row {
+    width: 70%;
+
+  }
+}
+
+/* Smartphone molto piccoli (max 360px) */
+@media screen and (max-width: 360px) {
+
+  .login header {
+    height: 25vh;
+  }
+
+  .login .bar-fixed {
+    height: 10vh;
+  }
+
+  .login .space-header {
+    width: 95%;
+  }
+
+  .login .overlay-image {
+    width: 80%;
+  }
+
+  .login .card-form {
+    width: 95%;
+    min-height: 420px;
+    padding: 15px 10px;
+  }
+
+  .login h1 {
+    font-size: 1.3rem;
+  }
+
+  .login h5 {
+    font-size: 0.8rem;
+  }
+
+  .login input {
+    max-width: 250px;
+    font-size: 13px;
+    line-height: 30px;
+  }
+
+  /* Pagina di registrazione */
+  .register .card-form {
+    width: 90%;
+  }
+
+  /* PAGINA DASHBOARD */
+  .dashboard .row {
+    width: 70%;
+
+  }
 }

@@ -1,5 +1,8 @@
 // controllers/authController.js
 const db = require('../db');
+const bcrypt = require('bcrypt');       // per confrontare password
+const jwt = require('jsonwebtoken');    // per generare token JWT
+require('dotenv').config();             // per leggere .env
 
 // LOGIN
 exports.login = async (req, res) => {
@@ -11,26 +14,47 @@ exports.login = async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      "SELECT * FROM User WHERE email = ? AND password = ?",
-      [email, password]
+      "SELECT * FROM User WHERE email = ?",
+      [email]
     );
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: "Credenziali non valide" });
+      return res.status(401).json({ message: "Email non valide" });
     }
 
-    res.json({ message: "Login effettuato", user: rows[0] });
+    const user = rows[0];
+
+    // Confronto password senza (bcrypt) per ora
+    const isMatch = password === user.password;
+    if (!isMatch) {
+      return res.status(401).json({ message: "psw non valide" });
+    }
+
+    // Genera JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.email }, // payload
+      process.env.JWT_SECRET,            // secret dal file .env
+      { expiresIn: '1h' }                 // scadenza del token
+    );
+
+    res.json({
+      message: "Login effettuato",
+      token, // Token JWT da salvare nel frontend
+      user: { id: user.id, email: user.email }
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Errore server" });
   }
 };
 
+
 // REGISTER
 exports.register = async (req, res) => {
-  const { first_name, last_name, birth_date, address, phone, email, password, confirmPassword } = req.body;
+  const { first_name, last_name, birth_date, address, city, cap, province, phone, email, password, confirmPassword } = req.body;
 
-  if (!first_name || !last_name || !birth_date || !address || !phone || !email || !password || !confirmPassword) {
+  if (!first_name || !last_name || !birth_date || !address || !city || !cap || !province || !phone || !email || !password || !confirmPassword) {
     return res.status(400).json({ message: "Tutti i campi sono obbligatori" });
   }
 
@@ -49,9 +73,9 @@ exports.register = async (req, res) => {
 
     // 2. inserisci nella tabella CustomerData con foreign key
     await db.query(
-      `INSERT INTO Customer_Data (user_id, first_name, last_name, birth_date, address, phone)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [userId, first_name, last_name, birth_date, address, phone]
+      `INSERT INTO Customer_Data (user_id, first_name, last_name, birth_date, address, city, cap, province, phone)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [userId, first_name, last_name, birth_date, address, city, cap, province, phone]
     );
 
     res.status(201).json({ message: "Registrazione completata con successo" });
