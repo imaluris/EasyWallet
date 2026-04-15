@@ -14,7 +14,7 @@ async function getInfoProfile() {
     const token = localStorage.getItem('token');
 
     try {
-        const res = await fetch('http://192.168.1.111:3000/user/userInfo', {
+        const res = await fetch('http://localhost:3000/user/userInfo', {
             headers: {
                 "Authorization": "Bearer " + token
             }
@@ -72,7 +72,7 @@ async function changePassword() {
     }
 
     try {
-        const response = await fetch('http://192.168.1.111:3000/user/changePassword', {
+        const response = await fetch('http://localhost:3000/user/changePassword', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ async function updateProfile() {
     const errorDiv = document.getElementById('error-message');
 
     try {
-        const response = await fetch('http://192.168.1.111:3000/user/updateProfile', {
+        const response = await fetch('http://localhost:3000/user/updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ async function updateProfile() {
 
 async function deleteProfile() {
     try {
-        const response = await fetch('http://192.168.1.111:3000/user/deleteUser', {
+        const response = await fetch('http://localhost:3000/user/deleteUser', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ function openModal(type) {
             cancelBtn = document.getElementById("cancel-logout");
             confirmBtn.onclick = () => {
                 localStorage.removeItem("token");
-                window.location.href = "http://192.168.1.111:8080";
+                window.location.href = "http://localhost:8080";
             };
             break;
 
@@ -190,7 +190,7 @@ function openModal(type) {
             cancelBtn = document.getElementById("cancel-delete");
             confirmBtn.onclick = () => {
                 deleteProfile();
-                window.location.href = "http://192.168.1.111:8080";
+                window.location.href = "http://localhost:8080";
 
             };
             break;

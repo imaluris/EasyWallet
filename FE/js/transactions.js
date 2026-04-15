@@ -2,7 +2,7 @@ const token = localStorage.getItem('token');
 
 async function fetchTransactions(filters = {}) {
   const params = new URLSearchParams(filters);
-  const res = await fetch(`http://192.168.1.111:3000/transaction/list?${params.toString()}`, {
+  const res = await fetch(`http://localhost:3000/transaction/list?${params.toString()}`, {
     headers: { "Authorization": "Bearer " + token }
   });
 
@@ -100,7 +100,7 @@ deleteBtn.addEventListener('click', async (e) => {
   
   if (confirm('Sei sicuro di voler eliminare questa transazione?')) {
     try {
-      const res = await fetch(`http://192.168.1.111:3000/transaction/delete?id=${t.id}`, {
+      const res = await fetch(`http://localhost:3000/transaction/delete?id=${t.id}`, {
         method: 'DELETE',
         headers: { "Authorization": "Bearer " + token }
       });

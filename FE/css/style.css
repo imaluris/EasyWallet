@@ -1065,49 +1065,63 @@ body.register {
 
 /* NAVBAR */
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 220px;
+  height: 90vh;
+
   display: flex;
-  align-items: center;
-  /* centra verticalmente logo e menu */
-  justify-content: center;
-  /* centra orizzontalmente logo + menu */
+  flex-direction: column;
+
+  align-items: flex-start;
+  padding: 20px;
+
   background-color: #2b4cb1;
   color: white;
-  height: 60px;
-  top: 0;
-  width: 100%;
+
   z-index: 1000;
 }
 
+/* LOGO */
 .navbar .logo {
-  margin-right: 40px;
-  /* spazio tra logo e menu */
+  margin-bottom: 30px; /* spazio sopra il menu */
 }
 
+/* MENU */
 .navbar .menu {
   display: flex;
-  /* menu in orizzontale */
-  align-items: center;
-  /* centra verticalmente i blocchi */
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 10px;
 }
 
+/* LINK */
 .navbar .menu a {
   display: flex;
-  /* rende l'intero blocco cliccabile */
   align-items: center;
-  /* centra il testo verticalmente */
-  justify-content: center;
-  /* centra il testo orizzontalmente */
-  width: 120px;
-  /* larghezza blocco cliccabile */
-  height: 60px;
-  /* altezza della navbar */
+  justify-content: flex-start;
+
+  width: 100%;
+  padding: 12px 15px;
+
   color: white;
   text-decoration: none;
-  transition: background 0.5s;
+  border-radius: 8px;
+
+  transition: background 0.3s;
 }
 
+/* HOVER */
 .navbar .menu a:hover {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== CONTENUTO A DESTRA ===== */
+.container {
+  margin-left: 220px;
 }
 
 /* FOOTER */

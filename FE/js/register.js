@@ -39,7 +39,7 @@ form.addEventListener('submit', async (e) => {
       alert("Le password non coincidono!");
       return false; // blocca il submit
     }
-    const response = await fetch('http://192.168.1.111:3000/auth/register', {
+    const response = await fetch('http://localhost:3000/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ first_name, last_name, birth_date, phone, address, city, cap, province, email, password, confirmPassword })

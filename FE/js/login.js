@@ -8,7 +8,7 @@ form.addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
 
   try {
-    const response = await fetch('http://192.168.1.111:3000/auth/login', {
+    const response = await fetch('http://localhost:3000/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

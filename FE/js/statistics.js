@@ -103,7 +103,7 @@ const token = localStorage.getItem('token');
 
 async function getCategoryBalance(filters = {}) {
     const params = new URLSearchParams(filters);
-    const res = await fetch(`http://192.168.1.111:3000/transaction/list?${params.toString()}`, {
+    const res = await fetch(`http://localhost:3000/transaction/list?${params.toString()}`, {
         headers: { "Authorization": "Bearer " + token }
     });
 
