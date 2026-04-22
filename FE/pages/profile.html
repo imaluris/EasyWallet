@@ -1,106 +1,272 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profilo — EasyWallet</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-
-<body class="profile">
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo"></div>
-    <nav class="menu">
-      <a class="navbar-item" href="dashboard.html">Home</a>
-      <a class="navbar-item" href="transactions.html">Transazioni</a>
-      <a class="navbar-item" href="statistics.html">Statistiche</a>
-      <a class="navbar-item" href="profile.html">Profilo</a>
-    </nav>
-  </header>
-
-  <!--MODAL PER MODIFICA PASSWORD-->
-  <div id="modifyPsw-modal" class="hidden">
-    <div class="modal-content">
-      <form id="change-password-form">
-        <p>Inserisci la password attuale</p>
-        <input type="password" placeholder="Password Attuale" id="current-psw" name="current-psw" required>
-        <p>Inserisci la nuova password</p>
-        <input type="password" placeholder="Nuova Password" id="new-psw" name="new-psw" required>
-        <input type="password" placeholder="Conferma Password" id="confirm-new-psw" name="confirm-new-psw" required>
-        <button type="submit" id="confirm-password">Conferma</button>
-        <button type="button" id="cancel-password">Annulla</button>
-        <div id="error-message"></div>
-      </form>
-    </div>
-  </div>
-
-  <!--MODAL PER MODIFICA PROFILO-->
-  <div id="modifyProfile-modal" class="hidden">
-    <div class="modal-content">
-      <form id="modify-profile-form">
-        <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
-        <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
-        <input type="date" placeholder="Data di nascita" id="birth_date" name="birth_date" required>
-        <input type="text" placeholder="Indirizzo" id="address" name="address" required>
-        <input type="text" placeholder="Città" id="city" name="city" required>
-        <input type="text" placeholder="Cap" id="cap" name="cap" required>
-        <input type="text" placeholder="Provincia" id="province" name="province" required>
-        <input type="text" placeholder="Telefono" id="phone" name="phone" required>
-        <button type="submit" id="confirm-modify-profile">Conferma</button>
-        <button type="button" id="cancel-modify-profile">Annulla</button>
-        <div id="error-message"></div>
-      </form>
-    </div>
-  </div>
-
-  <!--MODAL PER LOGOUT-->
-  <div id="logout-modal" class="hidden">
-    <div class="modal-content">
-      <p>Sei sicuro di voler uscire?</p>
-      <button id="confirm-logout">Sì</button>
-      <button id="cancel-logout">Annulla</button>
-    </div>
-  </div>
-
-  <!--MODAL PER ELIMINA PROFILO-->
-  <div id="delete-modal" class="hidden">
-    <div class="modal-content">
-      <p>Sei sicuro di voler eliminare il profilo?</p>
-      <button id="confirm-delete">Sì</button>
-      <button id="cancel-delete">Annulla</button>
-    </div>
-  </div>
-
-  <!-- Main-content -->
-  <main>
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div id="avatar"></div>
-        <hr>
-        <h1 id="full_name"></h1>
-        <hr>
-        <h1 id="email"></h1>
+  <body class="profile">
+    <!-- ─── MODAL MODIFICA PASSWORD ─────────────────────────────── -->
+    <div id="modifyPsw-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">Cambia password</span>
+          <button type="button" id="cancel-password" class="modal-close-btn">
+            &times;
+          </button>
+        </div>
+        <form id="change-password-form">
+          <div class="modal-form-group">
+            <label class="modal-label">Password attuale</label>
+            <input
+              type="password"
+              class="modal-input"
+              id="current-psw"
+              name="current-psw"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-label">Nuova password</label>
+            <input
+              type="password"
+              class="modal-input"
+              id="new-psw"
+              name="new-psw"
+              placeholder="Min. 8 caratteri"
+              required
+            />
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-label">Conferma password</label>
+            <input
+              type="password"
+              class="modal-input"
+              id="confirm-new-psw"
+              name="confirm-new-psw"
+              placeholder="Ripeti la password"
+              required
+            />
+          </div>
+          <div id="error-message" class="modal-error"></div>
+          <button type="submit" id="confirm-password" class="modal-submit-btn">
+            Cambia password
+          </button>
+        </form>
       </div>
-
-      <div class="row">
-        <button id="changePsw-btn" class="menu-profile-btn">Modifica password</button>
-        <button id="changeProfile-btn" class="menu-profile-btn">Modifica profilo</button>
-        <button id="logout-btn" class="menu-profile-btn">Logout</button>
-        <button id="deleteProfile-btn" class="menu-profile-btn">Elimina profilo</button>
-      </div>
-
-
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
-  </footer>
-  <script src="../js/profile.js"></script>
-</body>
+    <!-- ─── MODAL MODIFICA PROFILO ──────────────────────────────── -->
+    <div id="modifyProfile-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">Modifica profilo</span>
+          <button
+            type="button"
+            id="cancel-modify-profile"
+            class="modal-close-btn"
+          >
+            &times;
+          </button>
+        </div>
+        <form id="modify-profile-form">
+          <div class="modal-row">
+            <div class="modal-form-group">
+              <label class="modal-label">Nome</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="first_name"
+                name="first_name"
+                required
+              />
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label">Cognome</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="last_name"
+                name="last_name"
+                required
+              />
+            </div>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-label">Data di nascita</label>
+            <input
+              type="date"
+              class="modal-input"
+              id="birth_date"
+              name="birth_date"
+              required
+            />
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-label">Indirizzo</label>
+            <input
+              type="text"
+              class="modal-input"
+              id="address"
+              name="address"
+              required
+            />
+          </div>
+          <div class="modal-row">
+            <div class="modal-form-group">
+              <label class="modal-label">Città</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="city"
+                name="city"
+                required
+              />
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label">CAP</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="cap"
+                name="cap"
+                required
+              />
+            </div>
+          </div>
+          <div class="modal-row">
+            <div class="modal-form-group">
+              <label class="modal-label">Provincia</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="province"
+                name="province"
+                required
+              />
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label">Telefono</label>
+              <input
+                type="text"
+                class="modal-input"
+                id="phone"
+                name="phone"
+                required
+              />
+            </div>
+          </div>
+          <div id="error-message" class="modal-error"></div>
+          <button
+            type="submit"
+            id="confirm-modify-profile"
+            class="modal-submit-btn"
+          >
+            Salva modifiche
+          </button>
+        </form>
+      </div>
+    </div>
 
+    <!-- ─── MODAL LOGOUT ─────────────────────────────────────────── -->
+    <div id="logout-modal" class="modal-overlay hidden">
+      <div class="modal-content modal-confirm">
+        <div class="modal-confirm-icon">→</div>
+        <p class="modal-confirm-title">Vuoi uscire dall'account?</p>
+        <p class="modal-confirm-sub">Dovrai effettuare nuovamente il login.</p>
+        <div class="modal-confirm-actions">
+          <button id="cancel-logout" class="modal-cancel-btn">Annulla</button>
+          <button id="confirm-logout" class="modal-danger-btn">Esci</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MODAL ELIMINA PROFILO ────────────────────────────────── -->
+    <div id="delete-modal" class="modal-overlay hidden">
+      <div class="modal-content modal-confirm">
+        <div class="modal-confirm-icon danger">⚠</div>
+        <p class="modal-confirm-title">Eliminare l'account?</p>
+        <p class="modal-confirm-sub">
+          Questa azione è irreversibile. Tutti i tuoi dati verranno cancellati.
+        </p>
+        <div class="modal-confirm-actions">
+          <button id="cancel-delete" class="modal-cancel-btn">Annulla</button>
+          <button id="confirm-delete" class="modal-danger-btn">Elimina</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── LAYOUT ───────────────────────────────────────────────── -->
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="logo"></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" href="dashboard.html" title="Dashboard">
+            <span>Dashboard</span>
+            <img src="../assets/icons/layout-dashboard.svg" alt="Dashboard" />
+          </a>
+          <a class="nav-item" href="transactions.html" title="Transazioni">
+            <span>Transazioni</span>
+            <img src="../assets/icons/arrow-left-right.svg" alt="Transazioni" />
+          </a>
+          <a class="nav-item" href="statistics.html" title="Statistiche">
+            <span>Statistiche</span>
+            <img src="../assets/icons/chart-spline.svg" alt="Statistiche" />
+          </a>
+          <a class="nav-item active" href="profile.html" title="Profilo">
+            <span>Profilo</span>
+            <img src="../assets/icons/settings.svg" alt="Profilo" />
+          </a>
+        </nav>
+      </aside>
+
+      <div class="main-area">
+        <header class="topbar">
+          <span class="topbar-title">Profilo</span>
+          <div class="topbar-right">
+            <span class="topbar-badge"></span>
+            <div class="topbar-avatar" id="avatar"></div>
+          </div>
+        </header>
+
+        <main>
+          <div class="container">
+            <div class="profile-card">
+              <div class="profile-avatar-big" id="avatar-big"></div>
+              <div class="profile-name" id="full_name"></div>
+              <div class="profile-email" id="email"></div>
+
+              <div class="profile-divider"></div>
+
+              <div class="profile-actions">
+                <button id="changeProfile-btn" class="profile-action-btn">
+                  Modifica profilo
+                </button>
+                <button id="changePsw-btn" class="profile-action-btn">
+                  Cambia password
+                </button>
+                <button
+                  id="logout-btn"
+                  class="profile-action-btn profile-logout-btn"
+                >
+                  Esci dall'account
+                </button>
+                <button
+                  id="deleteProfile-btn"
+                  class="profile-action-btn profile-delete-btn"
+                >
+                  Elimina profilo
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="../js/profile.js"></script>
+  </body>
 </html>

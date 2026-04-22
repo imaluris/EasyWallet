@@ -1,8 +1,8 @@
 // controllers/authController.js
-const db = require('../db');
-const bcrypt = require('bcrypt');       // per confrontare password
-const jwt = require('jsonwebtoken');    // per generare token JWT
-require('dotenv').config();             // per leggere .env
+const db = require("../db");
+const bcrypt = require("bcrypt"); // per confrontare password
+const jwt = require("jsonwebtoken"); // per generare token JWT
+require("dotenv").config(); // per leggere .env
 
 // LOGIN
 exports.login = async (req, res) => {
@@ -14,8 +14,11 @@ exports.login = async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      "SELECT * FROM User WHERE email = ?",
-      [email]
+      `SELECT u.*, c.first_name, c.last_name 
+   FROM User u 
+   LEFT JOIN customer_data c ON c.user_id = u.id
+   WHERE u.email = ?`,
+      [email],
     );
 
     if (rows.length === 0) {
@@ -33,28 +36,55 @@ exports.login = async (req, res) => {
     // Genera JWT
     const token = jwt.sign(
       { id: user.id, email: user.email }, // payload
-      process.env.JWT_SECRET,            // secret dal file .env
-      { expiresIn: '1h' }                 // scadenza del token
+      process.env.JWT_SECRET, // secret dal file .env
+      { expiresIn: "1h" }, // scadenza del token
     );
 
     res.json({
       message: "Login effettuato",
-      token, // Token JWT da salvare nel frontend
-      user: { id: user.id, email: user.email }
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+      },
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Errore server" });
   }
 };
 
-
 // REGISTER
 exports.register = async (req, res) => {
-  const { first_name, last_name, birth_date, address, city, cap, province, phone, email, password, confirmPassword } = req.body;
+  const {
+    first_name,
+    last_name,
+    birth_date,
+    address,
+    city,
+    cap,
+    province,
+    phone,
+    email,
+    password,
+    confirmPassword,
+  } = req.body;
 
-  if (!first_name || !last_name || !birth_date || !address || !city || !cap || !province || !phone || !email || !password || !confirmPassword) {
+  if (
+    !first_name ||
+    !last_name ||
+    !birth_date ||
+    !address ||
+    !city ||
+    !cap ||
+    !province ||
+    !phone ||
+    !email ||
+    !password ||
+    !confirmPassword
+  ) {
     return res.status(400).json({ message: "Tutti i campi sono obbligatori" });
   }
 
@@ -66,7 +96,7 @@ exports.register = async (req, res) => {
     // 1. inserisci nella tabella User
     const [userResult] = await db.query(
       "INSERT INTO User (email, password) VALUES (?, ?)",
-      [email, password]  // ⚠️ da sostituire con hash in produzione
+      [email, password], // ⚠️ da sostituire con hash in produzione
     );
 
     const userId = userResult.insertId;
@@ -75,14 +105,22 @@ exports.register = async (req, res) => {
     await db.query(
       `INSERT INTO Customer_Data (user_id, first_name, last_name, birth_date, address, city, cap, province, phone)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, first_name, last_name, birth_date, address, city, cap, province, phone]
+      [
+        userId,
+        first_name,
+        last_name,
+        birth_date,
+        address,
+        city,
+        cap,
+        province,
+        phone,
+      ],
     );
 
     res.status(201).json({ message: "Registrazione completata con successo" });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Errore durante la registrazione" });
   }
 };
-

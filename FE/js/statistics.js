@@ -1,305 +1,306 @@
-const monthYearEl = document.getElementById("month-year");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
+const token = localStorage.getItem("token");
+const initials = localStorage.getItem("userInitials");
 
-const months = [
-    "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-    "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
-];
+// ─── ULTIMI 12 MESI SCORREVOLI ────────────────────────────────
+function buildRolling12() {
+  const now = new Date();
+  const labels = [];
+  const keys = [];
 
-const iconMap = {
-    casa: '../assets/home.png',
-    cibo: '../assets/food.png',
-    entrate: '../assets/income.png',
-    benessere: '../assets/health.png',
-    shopping: '../assets/shopping.png',
-    cultura: '../assets/culture.png',
-    viaggi: '../assets/travel.png',
-    sport: '../assets/sports.png'
-};
-
-const categoryMap = new Map([
-    ['Casa', 0],
-    ['Cibo', 0],
-    ['Entrate', 0],
-    ['Benessere', 0],
-    ['Shopping', 0],
-    ['Cultura', 0],
-    ['Viaggi', 0],
-    ['Sport', 0],
-]);
-
-const incomeMap = new Map([
-    ['Gennaio', 0],
-    ['Febbraio', 0],
-    ['Marzo', 0],
-    ['Aprile', 0],
-    ['Maggio', 0],
-    ['Giugno', 0],
-    ['Luglio', 0],
-    ['Agosto', 0],
-    ['Settembre', 0],
-    ['Ottobre', 0],
-    ['Novembre', 0],
-    ['Dicembre', 0],
-]);
-
-const expenseMap = new Map([
-    ['Gennaio', 0],
-    ['Febbraio', 0],
-    ['Marzo', 0],
-    ['Aprile', 0],
-    ['Maggio', 0],
-    ['Giugno', 0],
-    ['Luglio', 0],
-    ['Agosto', 0],
-    ['Settembre', 0],
-    ['Ottobre', 0],
-    ['Novembre', 0],
-    ['Dicembre', 0],
-]);
-
-const balanceMap = new Map([
-    ['Gennaio', 0],
-    ['Febbraio', 0],
-    ['Marzo', 0],
-    ['Aprile', 0],
-    ['Maggio', 0],
-    ['Giugno', 0],
-    ['Luglio', 0],
-    ['Agosto', 0],
-    ['Settembre', 0],
-    ['Ottobre', 0],
-    ['Novembre', 0],
-    ['Dicembre', 0],
-]);
-
-const monthMap = new Map([
-    [1, 'Gennaio'],
-    [2, 'Febbraio'],
-    [3, 'Marzo'],
-    [4, 'Aprile'],
-    [5, 'Maggio'],
-    [6, 'Giugno'],
-    [7, 'Luglio'],
-    [8, 'Agosto'],
-    [9, 'Settembre'],
-    [10, 'Ottobre'],
-    [11, 'Novembre'],
-    [12, 'Dicembre'],
-]);
-
-const Type = {
-    INCOME: 'income',
-    EXPENSE: 'expense',
-};
-
-let currentDate = new Date();
-let currentMonth = currentDate.getMonth();
-let currentYear = currentDate.getFullYear();
-
-///da qui è un casinoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-const token = localStorage.getItem('token');
-
-async function getCategoryBalance(filters = {}) {
-    const params = new URLSearchParams(filters);
-    const res = await fetch(`http://localhost:3000/transaction/list?${params.toString()}`, {
-        headers: { "Authorization": "Bearer " + token }
-    });
-
-    const data = await res.json();
-
-
-
-
-    data.forEach(t => {
-
-        //per ogni transazione prendo l'importo della categoria salvato nella mappa, sommo l'importo della transazione e lo riassegno alla mappa
-        console.log(t);
-
-        let sum = categoryMap.get(t.category);
-        if (t.type == Type.INCOME) {
-            sum += Number(t.amount);
-        } else {
-            sum -= Number(t.amount);
-        }
-
-        categoryMap.set(t.category, sum);
-
-        //risalgo al mese come stringa
-        const d = new Date(t.date);
-        const month = d.getMonth() + 1;
-        const monthString = monthMap.get(month);
-
-        //per ogni mese, sommo uscite ed entrate
-        if (t.type == "income") {
-            let incomeSum = incomeMap.get(monthString);
-            incomeSum += Number(t.amount);
-            incomeMap.set(monthString, incomeSum);
-        } else {
-            let incomeSum = expenseMap.get(monthString);
-            incomeSum += Number(t.amount);
-            expenseMap.set(monthString, incomeSum);
-        }
-    });
-
-    //per ogni mese dell'anno calcolo il saldo a fine mese
-    for (let i = 1; i < monthMap.size + 1; i++) {
-        if (i > 1) {
-            let monthString = monthMap.get(i);
-            let incomeMonth = incomeMap.get(monthString);
-
-            let monthStringPrec = monthMap.get(i - 1);
-
-            let expenseMonth = expenseMap.get(monthString);
-            balanceMap.set(monthString, balanceMap.get(monthStringPrec) + (incomeMonth - expenseMonth));
-        } else {
-            let monthString = monthMap.get(i);
-            let incomeMonth = incomeMap.get(monthString);
-            let expenseMonth = expenseMap.get(monthString);
-            balanceMap.set(monthString, incomeMonth - expenseMonth);
-        }
-    }
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    labels.push(d.toLocaleString("it-IT", { month: "short", year: "numeric" }));
+    keys.push(
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+    );
+  }
+  return { labels, keys };
 }
 
-function populateCardIncome() {
-    const list = document.getElementById('cards-list');
-    const template = document.getElementById('card-template');
+const { labels: rollingLabels, keys: rollingKeys } = buildRolling12();
 
-    for (const [key, value] of categoryMap) {
-        if (value < 0) {
-            const clone = template.content.cloneNode(true);
-            const div = clone.querySelector('.card-income');
+// Mappe indicizzate per "YYYY-MM"
+const incomeMap = new Map(rollingKeys.map((k) => [k, 0]));
+const expenseMap = new Map(rollingKeys.map((k) => [k, 0]));
+const balanceMap = new Map(rollingKeys.map((k) => [k, 0]));
+const categoryMap = new Map();
+let totalTransactions = 0;
 
-            div.querySelector('.first-row img').src = getIconPath(key);
-            div.querySelector('.category').textContent = key;
-            div.querySelector('.income').textContent = value;
-            div.querySelector('.currency').textContent = "EUR";
+// ─── FETCH TUTTE LE TRANSAZIONI + POPOLA MAPPE ───────────────
+async function loadAllData() {
+  const res = await fetch("http://localhost:3000/transaction/list", {
+    headers: { Authorization: "Bearer " + token },
+  });
+  const data = await res.json();
 
-            list.appendChild(clone);
-        }
+  // ordina per data crescente per calcolare il cumulativo correttamente
+  data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // running balance che tiene conto di TUTTE le transazioni storiche
+  let runningBalance = 0;
+
+  data.forEach((t) => {
+    const amount = Number(t.amount);
+    const d = new Date(t.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    totalTransactions++;
+    runningBalance += t.type === "income" ? amount : -amount;
+
+    if (incomeMap.has(key)) {
+      if (t.type === "income") {
+        incomeMap.set(key, incomeMap.get(key) + amount);
+      } else {
+        expenseMap.set(key, expenseMap.get(key) + amount);
+      }
+      balanceMap.set(key, runningBalance);
     }
 
-    console.log(categoryMap);
-
-    function getIconPath(category) {
-        // Qui puoi sostituire con icone vere (es. /img/home.svg)
-        const map = {
-            Casa: '../assets/home.png',
-            cibo: '../assets/food.png',
-            entrate: '../assets/income.png',
-            Benessere: '../assets/health.png',
-            shopping: '../assets/shopping.png',
-            cultura: '../assets/culture.png',
-            viaggi: '../assets/travel.png',
-            sport: '../assets/sports.png'
-        };
-        return map[category] || 'https://cdn-icons-png.flaticon.com/512/565/565547.png';
+    // categorie uscite (per donut e top uscite)
+    if (t.type === "expense") {
+      categoryMap.set(t.category, (categoryMap.get(t.category) ?? 0) + amount);
     }
+  });
+
+  // ─── CORREGGI MESI SENZA TRANSAZIONI ──────────────────────
+  // Calcola il saldo iniziale prima del primo mese del range
+  let lastBalance = 0;
+  data.forEach((t) => {
+    const d = new Date(t.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    if (key < rollingKeys[0]) {
+      lastBalance += t.type === "income" ? Number(t.amount) : -Number(t.amount);
+    }
+  });
+
+  // Per i mesi senza transazioni, eredita il balance del mese precedente
+  rollingKeys.forEach((key) => {
+    if (incomeMap.get(key) === 0 && expenseMap.get(key) === 0) {
+      balanceMap.set(key, lastBalance);
+    } else {
+      lastBalance = balanceMap.get(key);
+    }
+  });
 }
 
-//Funzione per generare il primo grafico (entrate ed uscite)
+// ─── KPI MESE CORRENTE ────────────────────────────────────────
+function buildKPI() {
+  const now = new Date();
+  const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+  setEl(
+    "stat-income",
+    `€ ${incomeMap.get(currentKey).toLocaleString("it-IT")}`,
+  );
+  setEl(
+    "stat-expense",
+    `€ ${expenseMap.get(currentKey).toLocaleString("it-IT")}`,
+  );
+  setEl(
+    "stat-balance",
+    `€ ${balanceMap.get(currentKey).toLocaleString("it-IT")}`,
+  );
+  setEl("stat-count", totalTransactions);
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ─── OPZIONI GRAFICI CONDIVISE ────────────────────────────────
+const sharedScales = {
+  x: {
+    grid: { color: "#2a2a3a", drawBorder: false },
+    ticks: { color: "#6b6a80", font: { family: "DM Mono", size: 10 } },
+  },
+  y: {
+    grid: { color: "#2a2a3a", drawBorder: false },
+    ticks: {
+      color: "#6b6a80",
+      font: { family: "DM Mono", size: 10 },
+      callback: (v) => `€${v.toLocaleString("it-IT")}`,
+    },
+  },
+};
+
+const sharedTooltip = {
+  backgroundColor: "#1a1a24",
+  borderColor: "#2a2a3a",
+  borderWidth: 1,
+  titleColor: "#6b6a80",
+  bodyColor: "#f0eff5",
+  callbacks: { label: (ctx) => ` €${ctx.parsed.y.toLocaleString("it-IT")}` },
+};
+
+// ─── GRAFICO BARRE: entrate/uscite ───────────────────────────
 function buildFirstChart() {
-
-    const labels = Array.from(incomeMap.keys());
-    const valuesIncome = Array.from(incomeMap.values());
-    const valuesExpense = Array.from(expenseMap.values());
-
-    console.log("Chart:", typeof Chart);
-    if (typeof Chart === "undefined") {
-        console.error("Chart.js non è stato caricato correttamente!");
-    } else {
-        console.log("Chart.js caricato correttamente");
-    }
-
-    const ctx = document.getElementById('firstChart');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Entrate',
-                    data: valuesIncome,
-                    borderColor: 'blue',
-                    backgroundColor: 'rgba(0,0,255,0.5)',
-                },
-                {
-                    label: 'uscite',
-                    data: valuesExpense,
-                    borderColor: 'red',
-                    backgroundColor: 'rgba(255,0,0,0.5)',
-                }
-            ]
+  new Chart(document.getElementById("firstChart"), {
+    type: "bar",
+    data: {
+      labels: rollingLabels,
+      datasets: [
+        {
+          label: "Entrate",
+          data: rollingKeys.map((k) => incomeMap.get(k)),
+          backgroundColor: "rgba(200,255,87,0.85)",
+          borderWidth: 0,
+          borderRadius: 6,
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: false,
-                    text: ''
-                }
-            }
-        }
-    });
-    document.addEventListener('DOMContentLoaded', buildFirstChart);
+        {
+          label: "Uscite",
+          data: rollingKeys.map((k) => expenseMap.get(k)),
+          backgroundColor: "rgba(255,92,92,0.75)",
+          borderWidth: 0,
+          borderRadius: 6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: "index", intersect: false },
+      plugins: { legend: { display: false }, tooltip: sharedTooltip },
+      scales: sharedScales,
+    },
+  });
 }
 
-//Funzione per generare il secondo grafico (balance trend)
-
+// ─── GRAFICO LINEA: balance trend ────────────────────────────
 function buildSecondChart() {
-
-    const labels = Array.from(incomeMap.keys());
-    const balanceForMonth = Array.from(balanceMap.values());
-
-
-    console.log("Chart:", typeof Chart);
-    if (typeof Chart === "undefined") {
-        console.error("Chart.js non è stato caricato correttamente!");
-    } else {
-        console.log("Chart.js caricato correttamente");
-    }
-
-    const ctx = document.getElementById('secondChart');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Saldo',
-                    data: balanceForMonth,
-                    borderColor: 'blue',
-                    backgroundColor: 'rgba(0,0,255,0.5)',
-                    fill: 1
-                },
-            ]
+  new Chart(document.getElementById("secondChart"), {
+    type: "line",
+    data: {
+      labels: rollingLabels,
+      datasets: [
+        {
+          label: "Saldo",
+          data: rollingKeys.map((k) => balanceMap.get(k)),
+          borderColor: "#5c9fff",
+          backgroundColor: "rgba(92,159,255,0.08)",
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          pointBackgroundColor: "#5c9fff",
+          tension: 0.4,
+          fill: true,
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: false,
-                    text: ''
-                }
-            }
-        }
-    });
-    document.addEventListener('DOMContentLoaded', buildSecondChart);
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: sharedTooltip },
+      scales: sharedScales,
+    },
+  });
 }
 
-// Mostra il mese corrente al caricamento
+// ─── DONUT: uscite per categoria ─────────────────────────────
+function buildCategoryChart() {
+  const canvas = document.getElementById("categoryChart");
+  if (!canvas || !categoryMap.size) return;
+
+  const entries = [...categoryMap.entries()].sort((a, b) => b[1] - a[1]);
+
+  new Chart(canvas, {
+    type: "doughnut",
+    data: {
+      labels: entries.map(([k]) => k),
+      datasets: [
+        {
+          data: entries.map(([, v]) => v),
+          backgroundColor: [
+            "#c8ff57",
+            "#ff5c5c",
+            "#5c9fff",
+            "#a855f7",
+            "#f59e0b",
+            "#10b981",
+          ],
+          borderColor: "#111118",
+          borderWidth: 3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      cutout: "65%",
+      plugins: {
+        legend: {
+          position: "right",
+          labels: {
+            color: "#6b6a80",
+            font: { family: "DM Mono", size: 11 },
+            padding: 14,
+            usePointStyle: true,
+          },
+        },
+        tooltip: {
+          backgroundColor: "#1a1a24",
+          borderColor: "#2a2a3a",
+          borderWidth: 1,
+          titleColor: "#6b6a80",
+          bodyColor: "#f0eff5",
+          callbacks: {
+            label: (ctx) => ` €${ctx.parsed.toLocaleString("it-IT")}`,
+          },
+        },
+      },
+    },
+  });
+}
+
+// ─── TOP USCITE ───────────────────────────────────────────────
+function buildTopList() {
+  const container = document.getElementById("top-list");
+  if (!container || !categoryMap.size) return;
+
+  const sorted = [...categoryMap.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const max = sorted[0][1];
+
+  sorted.forEach(([name, value]) => {
+    const pct = Math.round((value / max) * 100);
+    const item = document.createElement("div");
+    item.className = "top-item";
+    item.innerHTML = `
+      <div class="top-icon"><img src="${getIconPath(name)}" alt="${name}"></div>
+      <div class="top-info">
+        <div class="top-name">${name}</div>
+        <div class="top-bar-bg"><div class="top-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="top-amount">€ ${value.toLocaleString("it-IT")}</div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function getIconPath(category) {
+  const map = {
+    Casa: "../assets/home.png",
+    cibo: "../assets/food.png",
+    entrate: "../assets/income.png",
+    Benessere: "../assets/health.png",
+    shopping: "../assets/shopping.png",
+    cultura: "../assets/culture.png",
+    viaggi: "../assets/travel.png",
+    sport: "../assets/sports.png",
+  };
+  return (
+    map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png"
+  );
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
 async function init() {
-    await getCategoryBalance();  // aspetta che la mappa sia popolata
-    populateCardIncome();         // ora la mappa è aggiornata
-    buildFirstChart();
-    buildSecondChart();
+  document.getElementById("avatar").textContent = initials;
+
+  await loadAllData();
+  buildKPI();
+  buildFirstChart();
+  buildSecondChart();
+  buildCategoryChart();
+  buildTopList();
 }
 
 init();

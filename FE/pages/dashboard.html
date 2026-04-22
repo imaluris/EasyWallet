@@ -1,167 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — EasyWallet</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-  <link rel="stylesheet" href="../css/style.css">
-</head>
+  <body class="dashboard">
 
-<body class="dashboard">
+    <!-- Layout wrapper -->
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo"></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" href="dashboard.html" title="Dashboard">
+            <span>Dashboard</span>
+            <img src="../assets/icons/layout-dashboard.svg" alt="Home" />
+          </a>
+          <a class="nav-item" href="transactions.html" title="Transazioni">
+            <span>Transazioni</span>
+            <img src="../assets/icons/arrow-left-right.svg" alt="Transazioni" />
+          </a>
+          <a class="nav-item" href="statistics.html" title="Statistiche">
+            <span>Statistiche</span>
+            <img src="../assets/icons/chart-spline.svg" alt="Statistiche" />
+          </a>
+          <a class="nav-item" href="profile.html" title="Profilo">
+            <span>Profilo</span>
+            <img src="../assets/icons/settings.svg" alt="Profilo" />
+          </a>
+        </nav>
+      </aside>
 
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo"></div>
-    <nav class="menu">
-      <a class="navbar-item" href="dashboard.html">Home</a>
-      <a class="navbar-item" href="transactions.html">Transazioni</a>
-      <a class="navbar-item" href="statistics.html">Statistiche</a>
-      <a class="navbar-item" href="profile.html">Profilo</a>
-    </nav>
-  </header>
-
-  <!-- Modal -->
-  <div id="transactionModal" class="modal">
-    <div class="modal-content">
-      <button id="closeModal" class="close-btn">&times;</button>
-      <h2>Nuova Transazione</h2>
-
-      <form id="transactionForm">
-        <label>Tipo</label>
-        <select id="type" name="type" required>
-          <option value="income">Entrata</option>
-          <option value="expense">Uscita</option>
-        </select>
-
-        <label>Descrizione</label>
-        <input id="description" type="text" name="description" required>
-
-        <label>Importo (€)</label>
-        <input id="amount" type="number" name="amount" step="0.01" required>
-
-        <label>Categoria</label>
-        <input id="category" type="text" name="category">
-
-        <label>Data</label>
-        <input id="date" type="date" name="date">
-
-        <button type="submit" class="submit-btn">Salva</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Main -->
-  <main>
-    <div class="overlay"></div>
-
-    <div class="container">
-
-      <!-- GRID DASHBOARD -->
-      <div class="dashboard-grid">
-
-        <!-- COLONNA SINISTRA -->
-        <div class="left-column">
-
-          <!-- Month selector -->
-          <div class="row">
-            <div class="month-selector">
-              <button id="prev" class="arrow">←</button>
-              <span id="month-year"></span>
-              <button id="next" class="arrow">→</button>
-            </div>
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <span class="topbar-title">Dashboard</span>
+          <div class="topbar-right">
+            <div class="topbar-avatar" id="avatar"></div>
           </div>
+        </header>
 
-          <!-- Cards -->
-          <div id="cards-list">
-            <div class="card" id="balance-card">
-              <div class="first-row">
-                <h3>Saldo:</h3>
+        <!-- SCROLLABLE CONTENT -->
+        <main>
+          <div class="container">
+            <!-- HERO SALDO -->
+            <div class="balance-hero">
+              <div class="balance-hero-left">
+                <div class="balance-label">Saldo Totale</div>
+                <div id="balance" class="balance-amount"></div>
               </div>
-              <div id="balance" class="second-row"></div>
-            </div>
-
-            <div class="card" id="income-card">
-              <div class="first-row">
-                <h3>Entrate:</h3>
+              <div class="balance-hero-stats">
+                <div class="hero-stat">
+                  <span class="hero-stat-label">Entrate</span>
+                  <div id="income" class="hero-stat-value income"></div>
+                </div>
+                <div class="hero-divider"></div>
+                <div class="hero-stat">
+                  <span class="hero-stat-label">Uscite</span>
+                  <div id="expense" class="hero-stat-value expense"></div>
+                </div>
               </div>
-              <div id="income" class="second-row"></div>
             </div>
 
-            <div class="card" id="outcome-card">
-              <div class="first-row">
-                <h3>Uscite:</h3>
-              </div>
-              <div id="expense" class="second-row"></div>
-            </div>
-          </div>
+            <!-- DASHBOARD GRID -->
+            <div class="dashboard-grid">
+              <!-- COLONNA SINISTRA -->
+              <div class="left-column">
+                <!-- Grafico andamento -->
+                <div class="card-panel">
+                  <div class="panel-header">
+                    <span class="panel-title">Andamento</span>
+                    <span class="panel-badge">Questo mese</span>
+                  </div>
+                  <canvas id="lineChart"></canvas>
+                </div>
 
-          <!-- Chart -->
-          <div class="row">
-            <h3>Uscite per categoria</h3>
-            <canvas id="myChart"></canvas>
-          </div>
+                <!-- Ultime transazioni -->
+                <div class="card-panel transactions-container">
+                  <div class="panel-header">
+                    <span class="panel-title">Ultime Transazioni</span>
+                  </div>
 
-          <!-- Add transaction button -->
-          <div class="row">
-            <button id="openModal" class="add-btn">
-              Aggiungi una nuova transazione
-            </button>
-          </div>
+                  <div id="list"></div>
 
-          <p id="message"></p>
-        </div>
-
-        <!-- COLONNA DESTRA -->
-        <div class="right-column">
-
-          <div class="row transactions-container">
-            <h2>Ultime transazioni</h2>
-
-            <div id="list"></div>
-
-            <template id="transaction-template">
-              <div class="transaction">
-                <div class="row-top">
-                  <div class="date">
-                    <span class="day"></span>
-                    <div class="month-time">
-                      <span class="month"></span>
-                      <span class="time"></span>
+                  <template id="transaction-template">
+                    <div class="transaction">
+                      <div class="tx-icon-wrap">
+                        <img src="" alt="categoria" class="tx-icon-img" />
+                      </div>
+                      <div class="tx-info">
+                        <span class="description"></span>
+                        <span class="tx-date">
+                          <span class="day"></span>
+                          <span class="month"></span>
+                          <span class="time"></span>
+                        </span>
+                      </div>
+                      <span class="amount"></span>
                     </div>
-                  </div>
-
-                  <div class="icon">
-                    <img src="" alt="categoria">
-                  </div>
-                </div>
-
-                <hr>
-
-                <div class="row-bottom">
-                  <span class="description"></span>
-                  <span class="amount"></span>
+                  </template>
                 </div>
               </div>
-            </template>
 
+              <!-- COLONNA DESTRA -->
+              <div class="right-column">
+                <!-- Form aggiungi transazione -->
+                <div class="card-panel add-panel">
+                  <div class="panel-header">
+                    <span class="panel-title">Aggiungi Transazione</span>
+                  </div>
+
+                  <div class="type-toggle">
+                    <button class="type-btn income-btn" id="typeIncome">
+                      ↑ Entrata
+                    </button>
+                    <button class="type-btn expense-btn" id="typeExpense">
+                      ↓ Uscita
+                    </button>
+                  </div>
+
+                  <form id="quickForm" class="inline-form">
+                    <div class="form-group">
+                      <label class="form-label">Importo</label>
+                      <div class="amount-wrap">
+                        <span class="amount-prefix">€</span>
+                        <input
+                          class="form-input amount-input"
+                          id="quickAmount"
+                          type="number"
+                          placeholder="0,00"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Descrizione</label>
+                      <input
+                        class="form-input"
+                        id="quickDescription"
+                        type="text"
+                        placeholder="Es. Affitto, Stipendio..."
+                        required
+                      />
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Categoria</label>
+                        <select class="form-input" id="quickCategory">
+                          <option>Casa</option>
+                          <option>Cibo</option>
+                          <option>Lavoro</option>
+                          <option>Trasporti</option>
+                          <option>Altro</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Data</label>
+                        <input
+                          class="form-input"
+                          id="quickDate"
+                          type="date"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <button type="submit" class="add-btn">+ Aggiungi</button>
+                  </form>
+                </div>
+
+                <!-- Donut categorie -->
+                <div class="card-panel">
+                  <div class="panel-header">
+                    <span class="panel-title">Categorie Uscite</span>
+                  </div>
+                  <canvas id="myChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- /dashboard-grid -->
+
+            <p id="message"></p>
           </div>
-        </div>
-
+        </main>
       </div>
-      <!-- /dashboard-grid -->
-
+      <!-- /main-area -->
     </div>
-  </main>
+    <!-- /app-layout -->
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../js/dashboard.js"></script>
-
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/dashboard.js"></script>
+  </body>
 </html>

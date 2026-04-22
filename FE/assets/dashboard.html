@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — EasyWallet</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Il tuo CSS originale va sostituito con questo blocco,
+       oppure puoi incollare tutto in ../css/style.css -->
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────── */
+    :root {
+      --bg:         #0a0a0f;
+      --surface:    #111118;
+      --surface2:   #1a1a24;
+      --border:     #2a2a3a;
+      --text:       #f0eff5;
+      --muted:      #6b6a80;
+      --accent:     #c8ff57;
+      --accent2:    #ff5c5c;
+      --accent3:    #5c9fff;
+      --accent-dim: rgba(200,255,87,0.08);
+      --radius-card: 20px;
+      --radius-input: 10px;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* noise grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .5;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      gap: 32px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    /* Lettera "F" nel logo via pseudo-elemento */
+    .logo::after {
+      content: 'F';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      color: #0a0a0f;
+      /* flex su pseudo non funziona: usiamo text-align + line-height */
+      text-align: center;
+      line-height: 36px;
+    }
+
+    .menu {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .navbar-item {
+      padding: 7px 16px;
+      border-radius: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: .04em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: background .18s, color .18s;
+    }
+    .navbar-item:hover { background: var(--surface2); color: var(--text); }
+    .navbar-item.active,
+    .navbar-item[href="dashboard.html"] { /* evidenzia la voce corrente */
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* ─── MAIN ───────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 32px;
+    }
+
+    .overlay { display: none; } /* non necessario nel nuovo design */
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ─── GRID ───────────────────────────────────────────────── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .left-column,
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ─── ROW helper ─────────────────────────────────────────── */
+    .row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 24px 28px;
+      animation: fadeUp .45s ease both;
+    }
+    .row h2, .row h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -.3px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    /* ─── MONTH SELECTOR ─────────────────────────────────────── */
+    .month-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .month-selector #month-year {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -.4px;
+    }
+    .arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .18s, color .18s;
+    }
+    .arrow:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── CARDS SALDO / ENTRATE / USCITE ─────────────────────── */
+    #cards-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      animation: fadeUp .45s .05s ease both;
+      opacity: 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--accent); }
+
+    .card .first-row h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .card .second-row {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    #balance-card .second-row { color: var(--accent); }
+    #income-card  .second-row { color: var(--accent); }
+    #outcome-card .second-row { color: var(--accent2); }
+
+    /* glow accent per balance card */
+    #balance-card::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(200,255,87,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ─── CHART ──────────────────────────────────────────────── */
+    .row canvas {
+      max-height: 220px;
+    }
+
+    /* ─── ADD BUTTON ─────────────────────────────────────────── */
+    .add-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-input);
+      color: #0a0a0f;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .18s, transform .18s;
+    }
+    .add-btn:hover { background: #d4ff6a; transform: translateY(-1px); }
+
+    /* ─── MESSAGE ─────────────────────────────────────────────── */
+    #message {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      min-height: 16px;
+    }
+
+    /* ─── TRANSACTIONS LIST ──────────────────────────────────── */
+    .transactions-container {
+      animation: fadeUp .45s .1s ease both;
+      opacity: 0;
+    }
+    .transactions-container h2 {
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    #list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* singola transazione (da template) */
+    .transaction {
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background .15s;
+      border-bottom: 1px solid rgba(42,42,58,.5);
+    }
+    .transaction:last-child { border-bottom: none; }
+    .transaction:hover { background: var(--surface2); }
+
+    .row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    /* data */
+    .date {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .day {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -1px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .month-time {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .month { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .time  { font-size: 10px; color: var(--muted); }
+
+    /* icona categoria */
+    .icon img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+
+    /* separatore */
+    .transaction hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* riga descrizione + importo */
+    .row-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      gap: 8px;
+    }
+    .description {
+      font-size: 13px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .amount {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -.5px;
+      flex-shrink: 0;
+    }
+    /* colora importo: aggiungi .income / .expense via JS,
+       oppure colora in base al segno */
+    .amount.income  { color: var(--accent); }
+    .amount.expense { color: var(--accent2); }
+    /* fallback: importi che iniziano con + o − */
+    .amount[data-sign="income"]  { color: var(--accent); }
+    .amount[data-sign="expense"] { color: var(--accent2); }
+
+    /* ─── MODAL ──────────────────────────────────────────────── */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10,10,15,.75);
+      backdrop-filter: blur(6px);
+    }
+    .modal.open { display: flex; }
+
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      animation: fadeUp .3s ease both;
+    }
+    .modal-content h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -.5px;
+      margin-bottom: 24px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 18px; right: 20px;
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .18s, color .18s;
+    }
+    .close-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* form nel modal */
+    #transactionForm {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    #transactionForm label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: -8px; /* avvicina label all'input */
+    }
+    #transactionForm input,
+    #transactionForm select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 11px 14px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+      transition: border-color .18s;
+    }
+    #transactionForm input:focus,
+    #transactionForm select:focus { border-color: var(--accent); }
+    #transactionForm input::placeholder { color: var(--muted); }
+
+    .submit-btn {
+      margin-top: 4px;
+      padding: 13px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-input);
+      color: #0a0a0f;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .18s, transform .18s;
+    }
+    .submit-btn:hover { background: #d4ff6a; transform: translateY(-1px); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 16px 32px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .04em;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ─── ANIMAZIONI ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* delay progressivi per le card */
+    .row:nth-child(1) { animation-delay: .00s; }
+    .row:nth-child(2) { animation-delay: .06s; }
+    .row:nth-child(3) { animation-delay: .12s; }
+    .row:nth-child(4) { animation-delay: .18s; }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ─── RESPONSIVE (opzionale) ─────────────────────────────── */
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      #cards-list { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      main { padding: 16px; }
+      #cards-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="dashboard">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"></div>
+    <nav class="menu">
+      <a class="navbar-item" href="dashboard.html">Home</a>
+      <a class="navbar-item" href="transactions.html">Transazioni</a>
+      <a class="navbar-item" href="statistics.html">Statistiche</a>
+      <a class="navbar-item" href="profile.html">Profilo</a>
+    </nav>
+  </header>
+
+  <!-- Modal -->
+  <div id="transactionModal" class="modal">
+    <div class="modal-content">
+      <button id="closeModal" class="close-btn">&times;</button>
+      <h2>Nuova Transazione</h2>
+
+      <form id="transactionForm">
+        <label>Tipo</label>
+        <select id="type" name="type" required>
+          <option value="income">Entrata</option>
+          <option value="expense">Uscita</option>
+        </select>
+
+        <label>Descrizione</label>
+        <input id="description" type="text" name="description" required>
+
+        <label>Importo (€)</label>
+        <input id="amount" type="number" name="amount" step="0.01" required>
+
+        <label>Categoria</label>
+        <input id="category" type="text" name="category">
+
+        <label>Data</label>
+        <input id="date" type="date" name="date">
+
+        <button type="submit" class="submit-btn">Salva</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main>
+    <div class="overlay"></div>
+
+    <div class="container">
+
+      <!-- GRID DASHBOARD -->
+      <div class="dashboard-grid">
+
+        <!-- COLONNA SINISTRA -->
+        <div class="left-column">
+
+          <!-- Month selector -->
+          <div class="row">
+            <div class="month-selector">
+              <button id="prev" class="arrow">←</button>
+              <span id="month-year"></span>
+              <button id="next" class="arrow">→</button>
+            </div>
+          </div>
+
+          <!-- Cards -->
+          <div id="cards-list">
+            <div class="card" id="balance-card">
+              <div class="first-row">
+                <h3>Saldo</h3>
+              </div>
+              <div id="balance" class="second-row"></div>
+            </div>
+
+            <div class="card" id="income-card">
+              <div class="first-row">
+                <h3>Entrate</h3>
+              </div>
+              <div id="income" class="second-row"></div>
+            </div>
+
+            <div class="card" id="outcome-card">
+              <div class="first-row">
+                <h3>Uscite</h3>
+              </div>
+              <div id="expense" class="second-row"></div>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="row">
+            <h3>Uscite per categoria</h3>
+            <canvas id="myChart"></canvas>
+          </div>
+
+          <!-- Add transaction button -->
+          <div class="row">
+            <button id="openModal" class="add-btn">
+              + Aggiungi una nuova transazione
+            </button>
+          </div>
+
+          <p id="message"></p>
+        </div>
+
+        <!-- COLONNA DESTRA -->
+        <div class="right-column">
+
+          <div class="row transactions-container">
+            <h2>Ultime transazioni</h2>
+
+            <div id="list"></div>
+
+            <template id="transaction-template">
+              <div class="transaction">
+                <div class="row-top">
+                  <div class="date">
+                    <span class="day"></span>
+                    <div class="month-time">
+                      <span class="month"></span>
+                      <span class="time"></span>
+                    </div>
+                  </div>
+
+                  <div class="icon">
+                    <img src="" alt="categoria">
+                  </div>
+                </div>
+
+                <hr>
+
+                <div class="row-bottom">
+                  <span class="description"></span>
+                  <span class="amount"></span>
+                </div>
+              </div>
+            </template>
+
+          </div>
+        </div>
+
+      </div>
+      <!-- /dashboard-grid -->
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/dashboard.js"></script>
+
+</body>
+</html>

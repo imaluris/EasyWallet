@@ -4,86 +4,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
+  <title>Registrati — EasyWallet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
-
 </head>
 
 <body class="register">
-  <div class="overlay"></div>
-  <div class="container">
 
-    <div class="card-form">
+  <!-- ─── MODAL SUCCESSO ──────────────────────────────────────── -->
+  <div id="success-modal" class="modal-overlay hidden">
+    <div class="modal-content modal-confirm">
+      <div class="modal-confirm-icon" style="color:var(--db-accent);font-size:40px">✓</div>
+      <p class="modal-confirm-title">Account creato!</p>
+      <p class="modal-confirm-sub">Registrazione completata. Verrai reindirizzato al login.</p>
+    </div>
+  </div>
 
-      <form id="registerForm">
-        <div class="first-row">
-          <h1>Registrati</h1>
-          <h5>Inserisci i tuoi dati e procedi con la registrazione</h5>
+  <div class="login-layout">
+
+    <!-- SINISTRA: branding -->
+    <div class="login-brand">
+      <div class="login-logo">E</div>
+      <div class="login-brand-name">EasyWallet</div>
+      <div class="login-brand-sub">Crea il tuo account e inizia<br>a gestire le tue finanze.</div>
+    </div>
+
+    <!-- DESTRA: form -->
+    <div class="login-form-wrap">
+      <div class="login-card">
+
+        <!-- step indicator -->
+        <div class="reg-steps">
+          <div class="reg-step active" id="indicator-1">
+            <div class="reg-step-dot">1</div>
+            <span class="reg-step-label">Credenziali</span>
+          </div>
+          <div class="reg-step-line"></div>
+          <div class="reg-step" id="indicator-2">
+            <div class="reg-step-dot">2</div>
+            <span class="reg-step-label">Dati anagrafici</span>
+          </div>
         </div>
-        <div class="second-row">
+
+        <form id="registerForm">
+
           <!-- STEP 1 -->
           <div class="step active" id="step1">
-            <h2>Credenziali di accesso</h2>
-
-            <div class="input-row">
-              <input type="text" placeholder="Email" id="email" name="email" required>
+            <div class="login-card-header">
+              <h1 class="login-title">Credenziali di accesso</h1>
+              <p class="login-subtitle">Scegli email e password per il tuo account</p>
             </div>
 
-            <div class="input-row">
-              <input type="password" placeholder="Password" id="password" name="password" required>
-              <input type="password" placeholder="Conferma password" id="confirmPassword" name="confirmPassword"
-                required>
+            <div class="login-field">
+              <label class="login-label">Email</label>
+              <input type="email" class="login-input" id="email" name="email" placeholder="nome@email.com" required>
+            </div>
+            <div class="login-field">
+              <label class="login-label">Password</label>
+              <input type="password" class="login-input" id="password" name="password" placeholder="Min. 8 caratteri" required>
+            </div>
+            <div class="login-field">
+              <label class="login-label">Conferma password</label>
+              <input type="password" class="login-input" id="confirmPassword" name="confirmPassword" placeholder="Ripeti la password" required>
             </div>
 
-            <div class="button-row">
-              <button type="button" id="backToLogin">Torna al login</button>
-              <button type="button" id="nextBtn">Avanti</button>
-            </div>
+            <p id="message" class="login-message"></p>
 
+            <div class="reg-btn-row">
+              <a href="../index.html" class="reg-back-link">← Login</a>
+              <button type="button" id="nextBtn" class="login-btn reg-next-btn">Avanti →</button>
+            </div>
           </div>
 
           <!-- STEP 2 -->
           <div class="step" id="step2">
-            <h2>Dati anagrafici</h2>
-
-            <div class="input-row">
-              <input type="text" placeholder="Nome" id="first_name" name="first_name" required>
-              <input type="text" placeholder="Cognome" id="last_name" name="last_name" required>
+            <div class="login-card-header">
+              <h1 class="login-title">Dati anagrafici</h1>
+              <p class="login-subtitle">Completa il tuo profilo</p>
             </div>
 
-            <div class="input-row">
-              <input type="date" placeholder="Data di nascita" id="date" name="date">
-              <input type="text" placeholder="Indirizzo" id="address" name="address">
+            <div class="reg-field-row">
+              <div class="login-field">
+                <label class="login-label">Nome</label>
+                <input type="text" class="login-input" id="first_name" name="first_name" placeholder="Mario" required>
+              </div>
+              <div class="login-field">
+                <label class="login-label">Cognome</label>
+                <input type="text" class="login-input" id="last_name" name="last_name" placeholder="Rossi" required>
+              </div>
             </div>
 
-            <div class="input-row">
-              <input type="text" placeholder="Città" id="city" name="city" required>
-              <input type="number" placeholder="Cap" id="cap" name="cap" required>
+            <div class="login-field">
+              <label class="login-label">Data di nascita</label>
+              <input type="date" class="login-input" id="date" name="date">
             </div>
 
-            <div class="input-row">
-              <input type="texy" placeholder="Provincia" id="province" name="province" required>
-              <input type="number" placeholder="Telefono" id="phone" name="phone" required>
+            <div class="login-field">
+              <label class="login-label">Indirizzo</label>
+              <input type="text" class="login-input" id="address" name="address" placeholder="Via Roma 1">
             </div>
 
-            <div class="button-row">
-              <button type="button" id="backBtn">Indietro</button>
-              <button type="submit">Invia</button>
+            <div class="reg-field-row">
+              <div class="login-field">
+                <label class="login-label">Città</label>
+                <input type="text" class="login-input" id="city" name="city" placeholder="Roma" required>
+              </div>
+              <div class="login-field">
+                <label class="login-label">CAP</label>
+                <input type="number" class="login-input" id="cap" name="cap" placeholder="00100" required>
+              </div>
             </div>
 
+            <div class="reg-field-row">
+              <div class="login-field">
+                <label class="login-label">Provincia</label>
+                <input type="text" class="login-input" id="province" name="province" placeholder="RM" required>
+              </div>
+              <div class="login-field">
+                <label class="login-label">Telefono</label>
+                <input type="number" class="login-input" id="phone" name="phone" placeholder="3331234567" required>
+              </div>
+            </div>
+
+            <p id="message2" class="login-message"></p>
+
+            <div class="reg-btn-row">
+              <button type="button" id="backBtn" class="reg-back-btn">← Indietro</button>
+              <button type="submit" class="login-btn reg-next-btn">Registrati</button>
+            </div>
           </div>
-        </div>
-        <div class="third-row">
 
-        </div>
+        </form>
 
+        <p class="login-register">
+          Hai già un account? <a href="../index.html" class="login-link">Accedi</a>
+        </p>
+
+      </div>
     </div>
-    </form>
 
-    <p id="message"></p>
   </div>
 
   <script src="../js/register.js"></script>
 </body>
-
 </html>

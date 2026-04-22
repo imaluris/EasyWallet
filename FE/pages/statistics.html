@@ -1,72 +1,163 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistiche — EasyWallet</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link rel="stylesheet" href="../css/style.css">
-</head>
+  <body class="statistics">
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo"></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" href="dashboard.html" title="Dashboard">
+            <span>Dashboard</span>
+            <img src="../assets/icons/layout-dashboard.svg" alt="Dashboard" />
+          </a>
+          <a class="nav-item" href="transactions.html" title="Transazioni">
+            <span>Transazioni</span>
+            <img src="../assets/icons/arrow-left-right.svg" alt="Transazioni" />
+          </a>
+          <a class="nav-item active" href="statistics.html" title="Statistiche">
+            <span>Statistiche</span>
+            <img src="../assets/icons/chart-spline.svg" alt="Statistiche" />
+          </a>
+          <a class="nav-item" href="profile.html" title="Profilo">
+            <span>Profilo</span>
+            <img src="../assets/icons/settings.svg" alt="Profilo" />
+          </a>
+        </nav>
+      </aside>
 
-<body class="statistics">
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo"></div>
-    <nav class="menu">
-      <a class="navbar-item" href="dashboard.html">Home</a>
-      <a class="navbar-item" href="transactions.html">Transazioni</a>
-      <a class="navbar-item" href="statistics.html">Statistiche</a>
-      <a class="navbar-item" href="profile.html">Profilo</a>
-    </nav>
-  </header>
-  <!-- Main-content -->
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <span class="topbar-title">Statistiche</span>
+          <div class="topbar-right">
+            <div class="topbar-avatar" id="avatar"></div>
+          </div>
+        </header>
 
-  <main>
-    <div class="overlay"></div>
-    <div class="container">
-      
-      <div id="cards-list">
-        <template id="card-template">
-          <div class="card-income">
-            <div class="first-row">
-              <img src="" alt="categoria">
+        <main>
+          <div class="container">
+            <!-- KPI CARDS -->
+            <div class="stat-panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Riepilogo del mese</div>
+                  <div class="panel-subtitle">Confronto con il mese scorso</div>
+                </div>
+              </div>
+              <div class="kpi-grid" id="cards-list">
+                <template id="card-template">
+                  <div class="card-income">
+                    <div class="first-row">
+                      <img src="" alt="categoria" />
+                    </div>
+                    <div class="second-row">
+                      <span class="category"></span>
+                    </div>
+                    <div class="third-row">
+                      <span class="income"></span>
+                    </div>
+                    <div class="fourth-row">
+                      <span class="currency"></span>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- KPI statici — puoi renderizzarli via JS se hai i dati -->
+                <div class="kpi-card income-kpi">
+                  <div class="kpi-value" id="stat-income"></div>
+                  <div class="kpi-label">Entrate totali</div>
+                  <div class="kpi-delta positive" id="stat-income-delta"></div>
+                </div>
+                <div class="kpi-card expense-kpi">
+                  <div class="kpi-value" id="stat-expense"></div>
+                  <div class="kpi-label">Uscite totali</div>
+                  <div class="kpi-delta negative" id="stat-expense-delta"></div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-value" id="stat-balance"></div>
+                  <div class="kpi-label">Risparmio netto</div>
+                  <div class="kpi-delta positive" id="stat-balance-delta"></div>
+                </div>
+                <div class="kpi-card accent3-kpi">
+                  <div class="kpi-value" id="stat-count"></div>
+                  <div class="kpi-label">Transazioni</div>
+                  <div class="kpi-delta positive" id="stat-count-delta"></div>
+                </div>
+              </div>
             </div>
-            <div class="second-row">
-              <span class="category">
+
+            <!-- GRAFICO ENTRATE/USCITE (barre) -->
+            <div class="stat-panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Entrate vs Uscite</div>
+                  <div class="panel-subtitle">Tutti i mesi dell'anno</div>
+                </div>
+                <div class="chart-legend">
+                  <span
+                    ><span class="legend-dot income-dot"></span>Entrate</span
+                  >
+                  <span
+                    ><span class="legend-dot expense-dot"></span>Uscite</span
+                  >
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="firstChart"></canvas>
+              </div>
             </div>
-            <div class="third-row">
-              <span class="income">
+
+            <!-- GRAFICO BALANCE TREND (linea) -->
+            <div class="stat-panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Andamento saldo</div>
+                  <div class="panel-subtitle">Balance trend annuo</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="secondChart"></canvas>
+              </div>
             </div>
-            <div class="fourth-row">
-              <span class="currency">
+
+            <!-- RIGA INFERIORE: donut + top uscite -->
+            <div class="stat-bottom-grid">
+              <!-- Donut categorie -->
+              <div class="stat-panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Uscite per categoria</div>
+                    <div class="panel-subtitle">Anno corrente</div>
+                  </div>
+                </div>
+                <canvas id="categoryChart" class="donut-canvas"></canvas>
+              </div>
+
+              <!-- Top uscite -->
+              <div class="stat-panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Top uscite</div>
+                    <div class="panel-subtitle">Le maggiori dell'anno</div>
+                  </div>
+                </div>
+                <div class="top-list" id="top-list"></div>
+              </div>
             </div>
           </div>
-        </template>
+        </main>
       </div>
-      <div class="row">
-        <h3>Entrate/Uscite dell'anno</h3>
-        <div class="chart-container">
-          <canvas id="firstChart"></canvas>
-        </div>
-      </div>
-      <div class="row">
-        <h3>Balance trend grafico</h3>
-        <div class="chart-container">
-          <canvas id="secondChart"></canvas>
-        </div>
-      </div>
-
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 Andrea Castellani Perelli — EasyWallet</p>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script src="../js/statistics.js"></script>
-
-</body>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/statistics.js"></script>
+  </body>
 </html>
