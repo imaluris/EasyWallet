@@ -1,29 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transazioni — EasyWallet</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transazioni — EasyWallet</title>
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-
-<body class="transactions">
-
-  <!-- Layout wrapper -->
-  <div class="app-layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+  <body class="transactions">
+    <!-- Layout wrapper -->
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
         <div class="logo"></div>
         <nav class="sidebar-nav">
           <a class="nav-item" href="dashboard.html" title="Dashboard">
             <span>Dashboard</span>
             <img src="../assets/icons/layout-dashboard.svg" alt="Dashboard" />
           </a>
-          <a class="nav-item active" href="transactions.html" title="Transazioni">
+          <a
+            class="nav-item active"
+            href="transactions.html"
+            title="Transazioni"
+          >
             <span>Transazioni</span>
             <img src="../assets/icons/arrow-left-right.svg" alt="Transazioni" />
+          </a>
+          <a class="nav-item" href="savings.html" title="Salvadanaio">
+            <span>Salvadanaio</span>
+            <img src="../assets/icons/savings.svg" alt="Salvadanaio" />
           </a>
           <a class="nav-item" href="statistics.html" title="Statistiche">
             <span>Statistiche</span>
@@ -36,128 +41,131 @@
         </nav>
       </aside>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <span class="topbar-title">Transazioni</span>
+          <div class="topbar-right">
+            <div class="topbar-avatar" id="avatar"></div>
+          </div>
+        </header>
 
-      <!-- TOPBAR -->
-      <header class="topbar">
-        <span class="topbar-title">Transazioni</span>
-        <div class="topbar-right">
-          <div class="topbar-avatar" id="avatar"></div>
-        </div>
-      </header>
+        <!-- CONTENT -->
+        <main>
+          <div class="container">
+            <!-- FILTER BAR -->
+            <div class="filters">
+              <div class="filter-group">
+                <span class="filter-label">Tipo</span>
+                <div class="type-pills">
+                  <button class="type-pill all active" data-value="">
+                    Tutte
+                  </button>
+                  <button class="type-pill inc" data-value="income">
+                    ↑ Entrate
+                  </button>
+                  <button class="type-pill exp" data-value="expense">
+                    ↓ Uscite
+                  </button>
+                </div>
+              </div>
 
-      <!-- CONTENT -->
-      <main>
-        <div class="container">
+              <div class="filter-group">
+                <span class="filter-label">Categoria</span>
+                <select class="filter-select" id="filter-category">
+                  <option value="">Tutte le categorie</option>
+                  <option value="casa">🏠 Casa</option>
+                  <option value="cibo">🍔 Cibo</option>
+                  <option value="lavoro">💼 Lavoro</option>
+                  <option value="trasporti">🚗 Trasporti</option>
+                  <option value="benessere">💆 Benessere</option>
+                  <option value="altro">📦 Altro</option>
+                </select>
+              </div>
 
-          <!-- FILTER BAR -->
-          <div class="filters">
+              <div class="filter-group">
+                <span class="filter-label">Dal</span>
+                <input type="date" class="filter-select" id="filter-start" />
+              </div>
 
-            <div class="filter-group">
-              <span class="filter-label">Tipo</span>
-              <div class="type-pills">
-                <button class="type-pill all active" data-value="">Tutte</button>
-                <button class="type-pill inc" data-value="income">↑ Entrate</button>
-                <button class="type-pill exp" data-value="expense">↓ Uscite</button>
+              <div class="filter-group">
+                <span class="filter-label">Al</span>
+                <input type="date" class="filter-select" id="filter-end" />
+              </div>
+
+              <button class="reset-btn" id="reset-filters">
+                ✕ Reset filtri
+              </button>
+            </div>
+
+            <!-- RESULTS HEADER -->
+            <div class="results-header">
+              <div class="results-count">
+                <span id="results-count">0</span> transazioni trovate
+              </div>
+              <div class="sort-wrap">
+                Ordina per
+                <select class="sort-select" id="sort-select">
+                  <option value="date-desc">Data ↓</option>
+                  <option value="date-asc">Data ↑</option>
+                  <option value="amount-desc">Importo ↓</option>
+                  <option value="amount-asc">Importo ↑</option>
+                </select>
               </div>
             </div>
 
-            <div class="filter-group">
-              <span class="filter-label">Categoria</span>
-              <select class="filter-select" id="filter-category">
-                <option value="">Tutte le categorie</option>
-                <option value="casa">🏠 Casa</option>
-                <option value="cibo">🍔 Cibo</option>
-                <option value="lavoro">💼 Lavoro</option>
-                <option value="trasporti">🚗 Trasporti</option>
-                <option value="benessere">💆 Benessere</option>
-                <option value="altro">📦 Altro</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <span class="filter-label">Dal</span>
-              <input type="date" class="filter-select" id="filter-start">
-            </div>
-
-            <div class="filter-group">
-              <span class="filter-label">Al</span>
-              <input type="date" class="filter-select" id="filter-end">
-            </div>
-
-            <button class="reset-btn" id="reset-filters">✕ Reset filtri</button>
-
-          </div>
-
-          <!-- RESULTS HEADER -->
-          <div class="results-header">
-            <div class="results-count"><span id="results-count">0</span> transazioni trovate</div>
-            <div class="sort-wrap">
-              Ordina per
-              <select class="sort-select" id="sort-select">
-                <option value="date-desc">Data ↓</option>
-                <option value="date-asc">Data ↑</option>
-                <option value="amount-desc">Importo ↓</option>
-                <option value="amount-asc">Importo ↑</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- TABLE -->
-          <div class="tx-table">
-            <div class="tx-thead">
-              <span>Descrizione</span>
-              <span>Categoria</span>
-              <span>Data</span>
-              <span>Importo</span>
-              <span></span>
-            </div>
-
-            <div id="list"></div>
-
-            <template id="transaction-template">
-              <div class="transaction">
-                <div class="tx-cell-name">
-                  <div class="tx-icon-wrap">
-                    <img src="" alt="categoria" class="icon-img">
-                  </div>
-                  <div class="tx-name-info">
-                    <span class="description"></span>
-                    <span class="tx-type-label"></span>
-                  </div>
-                </div>
-                <div class="tx-cell">
-                  <span class="tx-cat-badge"><span class="category"></span></span>
-                </div>
-                <div class="tx-cell">
-                  <span class="date">
-                    <span class="day"></span>
-                    <span class="month"></span>
-                    <span class="year"></span>
-                  </span>
-                </div>
-                <div class="tx-cell">
-                  <span class="amount"></span>
-                </div>
-                <div class="tx-cell tx-action">
-                  <button class="delete-btn">✕</button>
-                </div>
+            <!-- TABLE -->
+            <div class="tx-table">
+              <div class="tx-thead">
+                <span>Descrizione</span>
+                <span>Categoria</span>
+                <span>Data</span>
+                <span>Importo</span>
+                <span></span>
               </div>
-            </template>
 
+              <div id="list"></div>
+
+              <template id="transaction-template">
+                <div class="transaction">
+                  <div class="tx-cell-name">
+                    <div class="tx-icon-wrap">
+                      <img src="" alt="categoria" class="icon-img" />
+                    </div>
+                    <div class="tx-name-info">
+                      <span class="description"></span>
+                      <span class="tx-type-label"></span>
+                    </div>
+                  </div>
+                  <div class="tx-cell">
+                    <span class="tx-cat-badge"
+                      ><span class="category"></span
+                    ></span>
+                  </div>
+                  <div class="tx-cell">
+                    <span class="date">
+                      <span class="day"></span>
+                      <span class="month"></span>
+                      <span class="year"></span>
+                    </span>
+                  </div>
+                  <div class="tx-cell">
+                    <span class="amount"></span>
+                  </div>
+                  <div class="tx-cell tx-action">
+                    <button class="delete-btn">✕</button>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
-
-        </div>
-      </main>
-
+        </main>
+      </div>
+      <!-- /main-area -->
     </div>
-    <!-- /main-area -->
+    <!-- /app-layout -->
 
-  </div>
-  <!-- /app-layout -->
-
-  <script src="../js/transactions.js"></script>
-
-</body>
+    <script src="../js/transactions.js"></script>
+  </body>
 </html>

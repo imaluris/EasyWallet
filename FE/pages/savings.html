@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salvadanaio — EasyWallet</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+
+  <body class="savings">
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo"></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" href="dashboard.html" title="Dashboard">
+            <span>Dashboard</span>
+            <img src="../assets/icons/layout-dashboard.svg" alt="Dashboard" />
+          </a>
+          <a class="nav-item" href="transactions.html" title="Transazioni">
+            <span>Transazioni</span>
+            <img src="../assets/icons/arrow-left-right.svg" alt="Transazioni" />
+          </a>
+          <a class="nav-item active" href="savings.html" title="Salvadanaio">
+            <span>Salvadanaio</span>
+            <img src="../assets/icons/savings.svg" alt="Salvadanaio" />
+          </a>
+          <a class="nav-item" href="statistics.html" title="Statistiche">
+            <span>Statistiche</span>
+            <img src="../assets/icons/chart-spline.svg" alt="Statistiche" />
+          </a>
+          <a class="nav-item" href="profile.html" title="Profilo">
+            <span>Profilo</span>
+            <img src="../assets/icons/settings.svg" alt="Profilo" />
+          </a>
+        </nav>
+      </aside>
+
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <span class="topbar-title">Salvadanaio</span>
+          <div class="topbar-right">
+            <button class="sv-new-btn" id="openModal">+ Nuovo obiettivo</button>
+            <div class="topbar-avatar" id="avatar"></div>
+          </div>
+        </header>
+
+        <main>
+          <div class="container">
+            <!-- KPI BANNER -->
+            <div class="sv-banner" id="sv-banner">
+              <div class="sv-banner-item">
+                <span class="sv-banner-label">Risparmio mensile medio</span>
+                <span class="sv-banner-value" id="sv-monthly-saving">—</span>
+              </div>
+              <div class="sv-banner-divider"></div>
+              <div class="sv-banner-item">
+                <span class="sv-banner-label">Entrate medie / mese</span>
+                <span class="sv-banner-value income" id="sv-avg-income">—</span>
+              </div>
+              <div class="sv-banner-divider"></div>
+              <div class="sv-banner-item">
+                <span class="sv-banner-label">Uscite medie / mese</span>
+                <span class="sv-banner-value expense" id="sv-avg-expense"
+                  >—</span
+                >
+              </div>
+            </div>
+
+            <!-- GOALS GRID -->
+            <div class="sv-grid" id="sv-grid"></div>
+
+            <!-- EMPTY STATE -->
+            <div class="sv-empty" id="sv-empty" style="display: none">
+              <div class="sv-empty-icon">🪣</div>
+              <div class="sv-empty-title">Nessun obiettivo ancora</div>
+              <div class="sv-empty-sub">
+                Crea il tuo primo salvadanaio e inizia a risparmiare
+              </div>
+              <button class="sv-new-btn" id="openModalEmpty">
+                + Nuovo obiettivo
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- MODAL NUOVO OBIETTIVO -->
+    <div class="modal-overlay" id="modal" style="display: none">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">Nuovo obiettivo</span>
+          <button class="modal-close-btn" id="closeModal">✕</button>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Nome obiettivo</label>
+          <input
+            class="modal-input"
+            id="m-name"
+            type="text"
+            placeholder="Es. Vacanza, Nuovo PC…"
+          />
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Target (€)</label>
+          <input
+            class="modal-input"
+            id="m-target"
+            type="number"
+            min="1"
+            placeholder="0,00"
+          />
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Già risparmiato (€)</label>
+          <input
+            class="modal-input"
+            id="m-saved"
+            type="number"
+            min="0"
+            placeholder="0,00"
+          />
+        </div>
+        <p class="modal-error" id="m-error"></p>
+        <button class="modal-submit-btn" id="m-submit">Crea obiettivo</button>
+      </div>
+    </div>
+
+    <!-- MODAL AGGIORNA IMPORTO -->
+    <div class="modal-overlay" id="update-modal" style="display: none">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title" id="um-title">Aggiorna importo</span>
+          <button class="modal-close-btn" id="closeUpdateModal">✕</button>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label">Importo attualmente risparmiato (€)</label>
+          <input class="modal-input" id="um-saved" type="number" min="0" />
+        </div>
+        <p class="modal-error" id="um-error"></p>
+        <button class="modal-submit-btn" id="um-submit">Salva</button>
+      </div>
+    </div>
+
+    <!-- TEMPLATE CARD -->
+    <template id="sv-card-template">
+      <div class="sv-card">
+        <div class="sv-card-header">
+          <div class="sv-card-icon">🎯</div>
+          <div class="sv-card-info">
+            <span class="sv-card-name"></span>
+            <span class="sv-card-meta"></span>
+          </div>
+          <button class="sv-delete-btn" title="Elimina">✕</button>
+        </div>
+        <div class="sv-progress-wrap">
+          <div class="sv-progress-bar">
+            <div class="sv-progress-fill"></div>
+          </div>
+          <div class="sv-progress-labels">
+            <span class="sv-saved-label"></span>
+            <span class="sv-pct-label"></span>
+          </div>
+        </div>
+        <div class="sv-card-footer">
+          <div class="sv-forecast">
+            <span class="sv-forecast-label">Mesi stimati</span>
+            <span class="sv-forecast-value"></span>
+          </div>
+          <button class="sv-update-btn">+ Aggiorna</button>
+        </div>
+        <div class="sv-threshold">
+          <span class="sv-threshold-value"></span>
+        </div>
+      </div>
+    </template>
+
+    <script src="../js/savings.js"></script>
+  </body>
+</html>
