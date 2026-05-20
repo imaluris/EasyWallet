@@ -28,7 +28,7 @@ let totalTransactions = 0;
 
 // ─── FETCH TUTTE LE TRANSAZIONI + POPOLA MAPPE ───────────────
 async function loadAllData() {
-  const res = await fetch("http://localhost:3000/transaction/list", {
+  const res = await fetch("/transaction/list", {
     headers: { Authorization: "Bearer " + token },
   });
   const data = await res.json();

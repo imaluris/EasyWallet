@@ -426,7 +426,7 @@
 .transactions .container { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 .transactions .overlay { display: none; }
 
-.transactions .filters { background: var(--db-surface); border: 1px solid var(--db-border); border-radius: var(--db-radius); padding: 20px 24px; display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; animation: fadeUp .4s ease both; }
+.transactions .filters { background: var(--db-surface); border: 1px solid var(--db-border); border-radius: var(--db-radius); padding: 20px 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; animation: fadeUp .4s ease both; }
 .transactions .filter-group { display: flex; flex-direction: column; gap: 7px; }
 .transactions .filter-label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--db-muted); }
 .transactions .type-pills { display: flex; gap: 6px; }

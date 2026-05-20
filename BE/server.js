@@ -8,7 +8,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const userRoutes = require('./routes/user');
 const savingsRoutes = require('./routes/savings');
 
-const allowedOrigins = ["http://192.168.1.111:8080", "http://localhost:8080","http://192.168.1.111:5500", "http://localhost:5500", "http://127.0.0.1:5500"];
+const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000","http://192.168.200.108:3000"];
 
 const app = express();
 const port = 3000;
@@ -29,6 +29,7 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/user', userRoutes);
 app.use('/api/savings', savingsRoutes);
 
+app.use(express.static('../FE'));
 
 
 

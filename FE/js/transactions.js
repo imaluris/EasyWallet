@@ -10,7 +10,7 @@ function updateCount(n) {
 async function fetchTransactions(filters = {}) {
   const params = new URLSearchParams(filters);
   const res = await fetch(
-    `http://localhost:3000/transaction/list?${params.toString()}`,
+    `/transaction/list?${params.toString()}`,
     {
       headers: { Authorization: "Bearer " + token },
     },
@@ -70,7 +70,7 @@ async function fetchTransactions(filters = {}) {
 
         try {
           const delRes = await fetch(
-            `http://localhost:3000/transaction/delete?id=${t.id}`,
+            `/transaction/delete?id=${t.id}`,
             {
               method: "DELETE",
               headers: { Authorization: "Bearer " + token },

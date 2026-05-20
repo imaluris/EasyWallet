@@ -17,7 +17,7 @@ async function getBalance() {
 
   try {
     const res = await fetch(
-      `http://localhost:3000/dashboard/summary?month=${monthBE}&year=${currentYear}`,
+      `/dashboard/summary?month=${monthBE}&year=${currentYear}`,
       { headers: { Authorization: "Bearer " + token } },
     );
     const data = await res.json();
@@ -56,7 +56,7 @@ async function buildLineChart() {
 
   // Fetch dati reali
   const res = await fetch(
-    `http://localhost:3000/dashboard/income-expense-monthly?month=${month}&year=${year}`,
+    `/dashboard/income-expense-monthly?month=${month}&year=${year}`,
     { headers: { Authorization: "Bearer " + token } },
   );
   const rows = await res.json();
@@ -154,7 +154,7 @@ async function buildChart() {
 
   try {
     const res = await fetch(
-      `http://localhost:3000/dashboard/category-totals?month=${monthBE}&year=${currentYear}`,
+      `/dashboard/category-totals?month=${monthBE}&year=${currentYear}`,
       { headers: { Authorization: "Bearer " + token } },
     );
     const categories = await res.json();
@@ -224,7 +224,7 @@ async function fetchLastFiveTransactions() {
   const token = localStorage.getItem("token");
 
   try {
-    const res = await fetch(`http://localhost:3000/dashboard/last-five`, {
+    const res = await fetch(`/dashboard/last-five`, {
       headers: { Authorization: "Bearer " + token },
     });
     const data = await res.json();
@@ -294,7 +294,7 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const res = await fetch(
-      "http://localhost:3000/transaction/addTransaction",
+      "/transaction/addTransaction",
       {
         method: "POST",
         headers: {

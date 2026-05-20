@@ -6,7 +6,7 @@ const user = {
 async function getInfoProfile() {
   const token = localStorage.getItem('token');
   try {
-    const res  = await fetch('http://localhost:3000/user/userInfo', {
+    const res  = await fetch('/user/userInfo', {
       headers: { "Authorization": "Bearer " + token }
     });
     const data = await res.json();
@@ -74,7 +74,7 @@ async function changePassword() {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/user/changePassword', {
+    const response = await fetch('/user/changePassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ async function updateProfile() {
   };
 
   try {
-    const response = await fetch('http://localhost:3000/user/updateProfile', {
+    const response = await fetch('/user/updateProfile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ async function updateProfile() {
 
 async function deleteProfile() {
   try {
-    const response = await fetch('http://localhost:3000/user/deleteUser', {
+    const response = await fetch('/user/deleteUser', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -157,7 +157,8 @@ function openModal(type) {
       cancelBtn  = document.getElementById("cancel-logout");
       confirmBtn.onclick = () => {
         localStorage.removeItem("token");
-        window.location.href = "http://localhost:5500";
+        localStorage.removeItem("userInitials");
+        window.location.href = window.location.origin;
       };
       break;
 
@@ -167,7 +168,7 @@ function openModal(type) {
       cancelBtn  = document.getElementById("cancel-delete");
       confirmBtn.onclick = () => {
         deleteProfile();
-        window.location.href = "http://localhost:5500";
+        window.location.href = window.location.origin;
       };
       break;
 
