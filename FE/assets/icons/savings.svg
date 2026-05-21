@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M19 12V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/>
-  <path d="M3 12h18"/>
-  <path d="M12 12v9"/>
-  <path d="M8 12v9"/>
-  <path d="M16 12v9"/>
-  <path d="M3 21h18"/>
+  <!-- Corpo portafoglio -->
+  <rect x="1" y="5" width="22" height="16" rx="2"/>
+  <!-- Lembo superiore -->
+  <path d="M3 5 L3 3 Q3 1 5 1 L19 1 Q22 1 22 4 L22 5"/>
+  <!-- Tasca monete -->
+  <rect x="14" y="9" width="9" height="8" rx="2"/>
+  <!-- Moneta -->
+  <circle cx="18.5" cy="13" r="2"/>
 </svg>

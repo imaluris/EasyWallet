@@ -7,6 +7,9 @@ BE/.env
 # Log files
 *.log
 
+# Config DB
+BE/db.js
+
 # IDE / OS files
 .DS_Store
 .vscode/

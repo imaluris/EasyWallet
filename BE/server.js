@@ -13,11 +13,8 @@ const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000","http:/
 const app = express();
 const port = 3000;
 
-// Abilita CORS per permettere richieste dal front end
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+// Abilita CORS a tutti per permettere l'accesso da qualsiasi origine (se necessario, posso restringerlo a specifici domini )
+app.use(cors());
 
 // Middleware per leggere JSON
 app.use(express.json());
@@ -33,4 +30,4 @@ app.use(express.static('../FE'));
 
 
 
-app.listen(port, '0.0.0.0', () => console.log(`Server in ascolto su http://192.168.1.111:${port}`));
+app.listen(port, '0.0.0.0', () => console.log(`Server in ascolto su http://192.168.200.108:${port}`));

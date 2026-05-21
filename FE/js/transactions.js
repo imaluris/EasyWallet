@@ -1,6 +1,9 @@
 const initials = localStorage.getItem("userInitials");
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
+// Esegue una fetch aggiungendo il token JWT nell'header Authorization.
+// Se il server risponde 401 o 403 (token mancante o scaduto),
+// rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
   const res = await fetch(url, options);
@@ -14,12 +17,17 @@ async function authFetch(url, options = {}) {
   return res;
 }
 
-// ─── CONTATORE RISULTATI ───────────────────────────────────────
+// ─── CONTATORE RISULTATI ──────────────────────────────────────────
+// Aggiorna il numero di transazioni mostrate nell'header della lista.
 function updateCount(n) {
   document.getElementById("results-count").textContent = n;
 }
 
-// ─── FETCH + RENDER TRANSAZIONI ───────────────────────────────
+// ─── FETCH E RENDER TRANSAZIONI ───────────────────────────────────
+// Recupera le transazioni dal server applicando i filtri passati come oggetto.
+// Svuota la lista e la ripopola clonando il template HTML per ogni risultato.
+// Per ogni riga registra anche il listener sul bottone elimina, che rimuove
+// la transazione dal server e aggiorna il contatore senza ricaricare la pagina.
 async function fetchTransactions(filters = {}) {
   const token = localStorage.getItem("token");
   const params = new URLSearchParams(filters);
@@ -65,6 +73,8 @@ async function fetchTransactions(filters = {}) {
 
     list.appendChild(clone);
 
+    // Listener sul bottone elimina: chiede conferma, chiama il server
+    // e rimuove la riga dal DOM decrementando il contatore.
     const insertedDiv = list.lastElementChild;
     insertedDiv.querySelector(".delete-btn").addEventListener("click", async (e) => {
       e.stopPropagation();
@@ -92,21 +102,26 @@ async function fetchTransactions(filters = {}) {
   });
 }
 
+// Restituisce il percorso dell'icona corrispondente alla categoria.
+// Se la categoria non è mappata usa un'icona generica di fallback.
 function getIconPath(category) {
   const map = {
     Casa: "../assets/home.png",
-    cibo: "../assets/food.png",
-    entrate: "../assets/income.png",
+    Cibo: "../assets/food.png",
+    Entrate: "../assets/income.png",
     Benessere: "../assets/health.png",
-    shopping: "../assets/shopping.png",
-    cultura: "../assets/culture.png",
-    viaggi: "../assets/travel.png",
-    sport: "../assets/sports.png",
+    Shopping: "../assets/shopping.png",
+    Cultura: "../assets/culture.png",
+    Viaggi: "../assets/travel.png",
+    Sport: "../assets/sports.png",
   };
   return map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png";
 }
 
-// ─── FILTRI ────────────────────────────────────────────────────
+// ─── FILTRI ───────────────────────────────────────────────────────
+// Legge i valori correnti dei controlli di filtro (tipo, categoria, date)
+// e restituisce un oggetto con solo i campi valorizzati, pronto per
+// essere passato a fetchTransactions().
 function getFilters() {
   const filters = {};
   if (selectedType) filters.type = selectedType;
@@ -119,7 +134,9 @@ function getFilters() {
   return filters;
 }
 
-// ─── PILLOLE TIPO ──────────────────────────────────────────────
+// ─── PILLOLE TIPO ─────────────────────────────────────────────────
+// Gestisce la selezione del tipo (Tutti / Entrate / Uscite) tramite le pill.
+// Aggiorna selectedType e ricarica le transazioni con i filtri correnti.
 let selectedType = "";
 
 document.querySelectorAll(".type-pill").forEach((pill) => {
@@ -131,12 +148,16 @@ document.querySelectorAll(".type-pill").forEach((pill) => {
   });
 });
 
-// ─── FILTRO AUTOMATICO ─────────────────────────────────────────
+// ─── FILTRI AUTOMATICI ────────────────────────────────────────────
+// Ogni volta che l'utente cambia categoria o intervallo di date,
+// ricarica automaticamente le transazioni con i filtri aggiornati.
 document.getElementById("filter-category").addEventListener("change", () => fetchTransactions(getFilters()));
-document.getElementById("filter-start").addEventListener("change", () => fetchTransactions(getFilters()));
-document.getElementById("filter-end").addEventListener("change", () => fetchTransactions(getFilters()));
+document.getElementById("filter-start").addEventListener("change",   () => fetchTransactions(getFilters()));
+document.getElementById("filter-end").addEventListener("change",     () => fetchTransactions(getFilters()));
 
-// ─── RESET FILTRI ──────────────────────────────────────────────
+// ─── RESET FILTRI ─────────────────────────────────────────────────
+// Riporta tutti i controlli allo stato iniziale (tipo "Tutti", nessuna
+// categoria, nessuna data) e ricarica tutte le transazioni senza filtri.
 document.getElementById("reset-filters").addEventListener("click", () => {
   document.querySelectorAll(".type-pill").forEach((p) => p.classList.remove("active"));
   document.querySelector(".type-pill.all").classList.add("active");
@@ -147,7 +168,10 @@ document.getElementById("reset-filters").addEventListener("click", () => {
   fetchTransactions();
 });
 
-// ─── ORDINAMENTO ───────────────────────────────────────────────
+// ─── ORDINAMENTO CLIENT-SIDE ──────────────────────────────────────
+// Ordina le righe già presenti nel DOM senza fare una nuova chiamata al server.
+// Supporta quattro modalità: data crescente/decrescente e importo crescente/decrescente.
+// Legge i valori direttamente dal testo delle celle per costruire i criteri di confronto.
 document.getElementById("sort-select").addEventListener("change", (e) => {
   const val = e.target.value;
   const list = document.getElementById("list");
@@ -159,17 +183,19 @@ document.getElementById("sort-select").addEventListener("change", (e) => {
     const dateA = new Date(`${a.querySelector(".day").textContent} ${a.querySelector(".month").textContent} ${a.querySelector(".year").textContent}`);
     const dateB = new Date(`${b.querySelector(".day").textContent} ${b.querySelector(".month").textContent} ${b.querySelector(".year").textContent}`);
 
-    if (val === "date-desc") return dateB - dateA;
-    if (val === "date-asc") return dateA - dateB;
+    if (val === "date-desc")   return dateB - dateA;
+    if (val === "date-asc")    return dateA - dateB;
     if (val === "amount-desc") return amountB - amountA;
-    if (val === "amount-asc") return amountA - amountB;
+    if (val === "amount-asc")  return amountA - amountB;
     return 0;
   });
 
   rows.forEach((r) => list.appendChild(r));
 });
 
-// ─── INIT ──────────────────────────────────────────────────────
+// ─── INIT ─────────────────────────────────────────────────────────
+// Se non c'è un token nel localStorage reindirizza subito al login.
+// Altrimenti imposta le iniziali dell'avatar e carica tutte le transazioni.
 if (!localStorage.getItem("token")) {
   window.location.replace("/");
 }

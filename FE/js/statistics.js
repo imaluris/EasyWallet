@@ -1,6 +1,9 @@
 const initials = localStorage.getItem("userInitials");
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
+// Esegue una fetch aggiungendo il token JWT nell'header Authorization.
+// Se il server risponde 401 o 403 (token mancante o scaduto),
+// rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
   const res = await fetch(url, options);
@@ -14,7 +17,10 @@ async function authFetch(url, options = {}) {
   return res;
 }
 
-// ─── ULTIMI 12 MESI SCORREVOLI ────────────────────────────────
+// ─── ULTIMI 12 MESI SCORREVOLI ────────────────────────────────────
+// Costruisce due array paralleli per gli ultimi 12 mesi a partire da oggi:
+// - labels: etichette leggibili (es. "gen. 2025")
+// - keys:   chiavi nel formato "YYYY-MM" usate come indici nelle mappe dati
 function buildRolling12() {
   const now = new Date();
   const labels = [];
@@ -30,13 +36,20 @@ function buildRolling12() {
 
 const { labels: rollingLabels, keys: rollingKeys } = buildRolling12();
 
-const incomeMap = new Map(rollingKeys.map((k) => [k, 0]));
-const expenseMap = new Map(rollingKeys.map((k) => [k, 0]));
-const balanceMap = new Map(rollingKeys.map((k) => [k, 0]));
-const categoryMap = new Map();
-let totalTransactions = 0;
+// Mappe "YYYY-MM" → valore, inizializzate a 0 per tutti i 12 mesi.
+// Vengono popolate da loadAllData() con i dati reali delle transazioni.
+const incomeMap  = new Map(rollingKeys.map((k) => [k, 0]));  // entrate per mese
+const expenseMap = new Map(rollingKeys.map((k) => [k, 0])); // uscite per mese
+const balanceMap = new Map(rollingKeys.map((k) => [k, 0])); // saldo cumulativo per mese
+const categoryMap = new Map(); // totale uscite per categoria (su tutti i dati storici)
+let totalTransactions = 0;     // contatore totale transazioni
 
-// ─── FETCH TUTTE LE TRANSAZIONI + POPOLA MAPPE ───────────────
+// ─── CARICAMENTO E POPOLAMENTO MAPPE ─────────────────────────────
+// Recupera tutte le transazioni dal server, le ordina per data e le usa per:
+// - popolare incomeMap ed expenseMap con i totali mensili degli ultimi 12 mesi
+// - calcolare il saldo cumulativo in balanceMap, propagando l'ultimo valore
+//   noto anche nei mesi senza transazioni
+// - popolare categoryMap con il totale delle uscite per ogni categoria
 async function loadAllData() {
   const token = localStorage.getItem("token");
   const res = await authFetch("/transaction/list", {
@@ -69,6 +82,8 @@ async function loadAllData() {
     }
   });
 
+  // Calcola il saldo accumulato prima della finestra dei 12 mesi,
+  // così il grafico del trend parte dal valore corretto e non da zero.
   let lastBalance = 0;
   data.forEach((t) => {
     const d = new Date(t.date);
@@ -78,6 +93,8 @@ async function loadAllData() {
     }
   });
 
+  // Propaga l'ultimo saldo noto nei mesi senza transazioni,
+  // evitando che il grafico torni a zero nei periodi inattivi.
   rollingKeys.forEach((key) => {
     if (incomeMap.get(key) === 0 && expenseMap.get(key) === 0) {
       balanceMap.set(key, lastBalance);
@@ -87,23 +104,29 @@ async function loadAllData() {
   });
 }
 
-// ─── KPI MESE CORRENTE ────────────────────────────────────────
+// ─── KPI MESE CORRENTE ────────────────────────────────────────────
+// Legge entrate, uscite, saldo e numero totale di transazioni
+// del mese corrente dalle mappe e li scrive nei rispettivi elementi del DOM.
 function buildKPI() {
   const now = new Date();
   const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-  setEl("stat-income", `€ ${incomeMap.get(currentKey).toLocaleString("it-IT")}`);
+  setEl("stat-income",  `€ ${incomeMap.get(currentKey).toLocaleString("it-IT")}`);
   setEl("stat-expense", `€ ${expenseMap.get(currentKey).toLocaleString("it-IT")}`);
   setEl("stat-balance", `€ ${balanceMap.get(currentKey).toLocaleString("it-IT")}`);
   setEl("stat-count", totalTransactions);
 }
 
+// Utility: scrive un valore testuale nell'elemento con l'id specificato,
+// se esiste nel DOM.
 function setEl(id, val) {
   const el = document.getElementById(id);
   if (el) el.textContent = val;
 }
 
-// ─── OPZIONI GRAFICI CONDIVISE ────────────────────────────────
+// ─── OPZIONI GRAFICI CONDIVISE ────────────────────────────────────
+// Configurazione degli assi e del tooltip riusata da tutti i grafici
+// a barre e a linee per mantenere uno stile coerente.
 const sharedScales = {
   x: {
     grid: { color: "#2a2a3a", drawBorder: false },
@@ -128,7 +151,9 @@ const sharedTooltip = {
   callbacks: { label: (ctx) => ` €${ctx.parsed.y.toLocaleString("it-IT")}` },
 };
 
-// ─── GRAFICO BARRE: entrate/uscite ───────────────────────────
+// ─── GRAFICO BARRE: entrate vs uscite ─────────────────────────────
+// Mostra due barre affiancate per ogni mese degli ultimi 12:
+// verde per le entrate, rosso per le uscite.
 function buildFirstChart() {
   new Chart(document.getElementById("firstChart"), {
     type: "bar",
@@ -160,7 +185,9 @@ function buildFirstChart() {
   });
 }
 
-// ─── GRAFICO LINEA: balance trend ────────────────────────────
+// ─── GRAFICO LINEA: andamento saldo ───────────────────────────────
+// Mostra il saldo cumulativo mese per mese negli ultimi 12 mesi.
+// Usa balanceMap che propaga l'ultimo valore noto nei mesi inattivi.
 function buildSecondChart() {
   new Chart(document.getElementById("secondChart"), {
     type: "line",
@@ -189,7 +216,10 @@ function buildSecondChart() {
   });
 }
 
-// ─── DONUT: uscite per categoria ─────────────────────────────
+// ─── DONUT: uscite per categoria ──────────────────────────────────
+// Costruisce il grafico donut con la distribuzione delle uscite per categoria
+// su tutto lo storico. Le categorie sono ordinate dalla più costosa.
+// Non viene renderizzato se categoryMap è vuota.
 function buildCategoryChart() {
   const canvas = document.getElementById("categoryChart");
   if (!canvas || !categoryMap.size) return;
@@ -230,7 +260,10 @@ function buildCategoryChart() {
   });
 }
 
-// ─── TOP USCITE ───────────────────────────────────────────────
+// ─── TOP 5 CATEGORIE DI SPESA ─────────────────────────────────────
+// Costruisce la lista delle prime 5 categorie per importo totale speso.
+// Per ogni voce mostra icona, nome, una barra proporzionale al massimo
+// e l'importo totale. Non viene renderizzata se categoryMap è vuota.
 function buildTopList() {
   const container = document.getElementById("top-list");
   if (!container || !categoryMap.size) return;
@@ -254,6 +287,8 @@ function buildTopList() {
   });
 }
 
+// Restituisce il percorso dell'icona corrispondente alla categoria.
+// Se la categoria non è mappata usa un'icona generica di fallback.
 function getIconPath(category) {
   const map = {
     Casa: "../assets/home.png",
@@ -268,7 +303,9 @@ function getIconPath(category) {
   return map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png";
 }
 
-// ─── INIT ─────────────────────────────────────────────────────
+// ─── INIT ─────────────────────────────────────────────────────────
+// Se non c'è un token reindirizza al login. Altrimenti carica tutti i dati
+// e costruisce in sequenza KPI, grafici e lista top categorie.
 async function init() {
   if (!localStorage.getItem("token")) {
     window.location.replace("/");

@@ -1,12 +1,16 @@
 const API = "/api";
 const initials = localStorage.getItem("userInitials");
 
-let goals = [];
-let avgIncome = 0;
-let avgExpense = 0;
-let editingId = null;
+// ─── STATO GLOBALE ────────────────────────────────────────────────
+let goals = [];      // array degli obiettivi di risparmio caricati dal server
+let avgIncome = 0;   // media mensile delle entrate degli ultimi mesi
+let avgExpense = 0;  // media mensile delle uscite degli ultimi mesi
+let editingId = null; // id dell'obiettivo in fase di aggiornamento nel modal
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
+// Esegue una fetch aggiungendo il token JWT nell'header Authorization.
+// Se il server risponde 401 o 403 (token mancante o scaduto),
+// rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
   const res = await fetch(url, options);
@@ -20,7 +24,8 @@ async function authFetch(url, options = {}) {
   return res;
 }
 
-// ── HELPERS ─────────────────────────────────────────────────────
+// ─── HELPERS ──────────────────────────────────────────────────────
+// Formatta un numero come valuta in euro con 2 decimali (es. "€ 1.250,00").
 const fmt = (v) =>
   "€ " +
   parseFloat(v).toLocaleString("it-IT", {
@@ -28,6 +33,9 @@ const fmt = (v) =>
     maximumFractionDigits: 2,
   });
 
+// Calcola i mesi stimati per raggiungere l'obiettivo in base al risparmio
+// mensile medio (avgIncome - avgExpense). Restituisce "∞" se non si sta
+// risparmiando, "✓ Raggiunto" se l'obiettivo è già stato centrato.
 function monthsToGoal(goal) {
   const monthlySaving = avgIncome - avgExpense;
   if (monthlySaving <= 0) return "∞";
@@ -37,6 +45,9 @@ function monthsToGoal(goal) {
   return months + " mes" + (months === 1 ? "e" : "i");
 }
 
+// Calcola la soglia massima di spesa mensile che l'utente può permettersi
+// per raggiungere l'obiettivo nei mesi stimati. Restituisce null se
+// l'obiettivo è già raggiunto o il risparmio mensile è insufficiente.
 function spendingThreshold(goal) {
   const monthlySaving = avgIncome - avgExpense;
   if (monthlySaving <= 0) return null;
@@ -48,12 +59,17 @@ function spendingThreshold(goal) {
   return threshold;
 }
 
+// Calcola la percentuale di completamento dell'obiettivo (0-100),
+// bloccata a 100 anche se il salvato supera il target.
 function pct(goal) {
   if (goal.target <= 0) return 0;
   return Math.min(100, Math.round((goal.saved / goal.target) * 100));
 }
 
-// ── RENDER ──────────────────────────────────────────────────────
+// ─── RENDER CARDS ─────────────────────────────────────────────────
+// Svuota la griglia e ricrea tutte le card degli obiettivi dal template HTML.
+// Per ogni obiettivo popola nome, target, progresso, previsione e soglia di spesa.
+// Se non ci sono obiettivi mostra lo stato vuoto con il bottone per crearne uno.
 function render() {
   const grid = document.getElementById("sv-grid");
   const empty = document.getElementById("sv-empty");
@@ -102,6 +118,9 @@ function render() {
   });
 }
 
+// Aggiorna il banner in cima alla pagina con le medie mensili di entrate,
+// uscite e risparmio netto. Colora il risparmio di verde o rosso
+// in base al segno.
 function renderBanner() {
   const saving = avgIncome - avgExpense;
   document.getElementById("sv-avg-income").textContent = fmt(avgIncome);
@@ -110,7 +129,9 @@ function renderBanner() {
   document.getElementById("sv-monthly-saving").className = "sv-banner-value " + (saving >= 0 ? "income" : "expense");
 }
 
-// ── API CALLS ────────────────────────────────────────────────────
+// ─── CHIAMATE API ─────────────────────────────────────────────────
+// Carica dal server tutti gli obiettivi e le medie mensili,
+// aggiorna lo stato globale e ridisegna banner e griglia.
 async function load() {
   try {
     const token = localStorage.getItem("token");
@@ -128,6 +149,10 @@ async function load() {
   }
 }
 
+// Crea un nuovo obiettivo sul server con nome e target.
+// Se l'utente ha già inserito un importo iniziale salvato,
+// esegue subito dopo anche una PATCH per aggiornarlo.
+// Al termine ricarica tutti i dati con load().
 async function createGoal(name, target, saved) {
   const token = localStorage.getItem("token");
   const res = await authFetch(`${API}/savings`, {
@@ -155,6 +180,8 @@ async function createGoal(name, target, saved) {
   await load();
 }
 
+// Aggiorna l'importo salvato di un obiettivo esistente tramite PATCH,
+// poi ricarica tutti i dati con load().
 async function updateGoal(id, saved) {
   const token = localStorage.getItem("token");
   const res = await authFetch(`${API}/savings/${id}`, {
@@ -169,6 +196,7 @@ async function updateGoal(id, saved) {
   await load();
 }
 
+// Elimina un obiettivo dal server tramite DELETE e ricarica i dati.
 async function deleteGoal(id) {
   const token = localStorage.getItem("token");
   await authFetch(`${API}/savings/${id}`, {
@@ -178,7 +206,8 @@ async function deleteGoal(id) {
   await load();
 }
 
-// ── MODAL NUOVO ──────────────────────────────────────────────────
+// ─── MODAL NUOVO OBIETTIVO ────────────────────────────────────────
+// Apre il modal di creazione e chiude resettando tutti i campi e gli errori.
 function openModal() {
   document.getElementById("modal").style.display = "flex";
 }
@@ -193,10 +222,13 @@ function closeModal() {
 document.getElementById("openModal").addEventListener("click", openModal);
 document.getElementById("openModalEmpty").addEventListener("click", openModal);
 document.getElementById("closeModal").addEventListener("click", closeModal);
+// Chiude il modal cliccando sull'overlay esterno
 document.getElementById("modal").addEventListener("click", (e) => {
   if (e.target === document.getElementById("modal")) closeModal();
 });
 
+// Valida i campi del form (nome, target, saved) e chiama createGoal().
+// Mostra eventuali errori di validazione inline senza bloccare la pagina.
 document.getElementById("m-submit").addEventListener("click", async () => {
   const name = document.getElementById("m-name").value.trim();
   const target = parseFloat(document.getElementById("m-target").value);
@@ -215,7 +247,9 @@ document.getElementById("m-submit").addEventListener("click", async () => {
   }
 });
 
-// ── MODAL AGGIORNA ───────────────────────────────────────────────
+// ─── MODAL AGGIORNA OBIETTIVO ─────────────────────────────────────
+// Apre il modal di aggiornamento pre-compilando il campo con il valore
+// attualmente salvato e memorizzando l'id dell'obiettivo in editingId.
 function openUpdateModal(goal) {
   editingId = goal.id;
   document.getElementById("um-title").textContent = `Aggiorna: ${goal.name}`;
@@ -223,16 +257,20 @@ function openUpdateModal(goal) {
   document.getElementById("um-error").textContent = "";
   document.getElementById("update-modal").style.display = "flex";
 }
+
+// Chiude il modal di aggiornamento e resetta editingId.
 function closeUpdateModal() {
   document.getElementById("update-modal").style.display = "none";
   editingId = null;
 }
 
 document.getElementById("closeUpdateModal").addEventListener("click", closeUpdateModal);
+// Chiude il modal cliccando sull'overlay esterno
 document.getElementById("update-modal").addEventListener("click", (e) => {
   if (e.target === document.getElementById("update-modal")) closeUpdateModal();
 });
 
+// Valida il nuovo valore salvato e chiama updateGoal() con l'id memorizzato.
 document.getElementById("um-submit").addEventListener("click", async () => {
   const saved = parseFloat(document.getElementById("um-saved").value);
   const err = document.getElementById("um-error");
@@ -246,7 +284,9 @@ document.getElementById("um-submit").addEventListener("click", async () => {
   }
 });
 
-// ── INIT ─────────────────────────────────────────────────────────
+// ─── INIT ─────────────────────────────────────────────────────────
+// Se non c'è un token nel localStorage reindirizza subito al login.
+// Altrimenti imposta le iniziali dell'avatar e carica i dati della pagina.
 if (!localStorage.getItem("token")) {
     window.location.replace("/");
 }

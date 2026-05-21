@@ -1,3 +1,4 @@
+// ─── RIFERIMENTI DOM E STATO ──────────────────────────────────────
 const modal = document.getElementById("transactionModal");
 const openBtn = document.getElementById("openModal");
 const closeBtn = document.getElementById("closeModal");
@@ -5,10 +6,13 @@ const form = document.getElementById("quickForm");
 const message = document.getElementById("message");
 const initials = localStorage.getItem("userInitials");
 
-let chartInstance = null;
-let selectedType = null;
+let chartInstance = null; // istanza del grafico donut, salvata per poterla distruggere e ricreare
+let selectedType = null;  // tipo di transazione selezionato ("income" o "expense")
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
+// Esegue una fetch aggiungendo automaticamente il token JWT nell'header.
+// Se il server risponde 401 o 403 (token mancante o scaduto),
+// rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
   const res = await fetch(url, {
@@ -28,7 +32,10 @@ async function authFetch(url, options = {}) {
   return res;
 }
 
-// ─── SALDO / ENTRATE / USCITE ────────────────────────────────────
+// ─── SALDO / ENTRATE / USCITE ─────────────────────────────────────
+// Recupera il riepilogo finanziario del mese corrente (saldo, entrate, uscite)
+// e aggiorna i valori nella balance hero card in cima alla dashboard.
+// Se il saldo è negativo aggiunge la classe CSS "negative" per colorarlo di rosso.
 async function getBalance() {
   const now = new Date();
   const monthBE = now.getMonth() + 1;
@@ -54,6 +61,11 @@ async function getBalance() {
   }
 }
 
+// ─── GRAFICO LINEE ANDAMENTO MENSILE ──────────────────────────────
+// Costruisce il grafico a linee che mostra l'andamento giornaliero
+// di entrate e uscite nel mese corrente.
+// Recupera i dati dal server, li distribuisce su un array di N giorni
+// (uno per ogni giorno del mese) e inizializza il chart con Chart.js.
 async function buildLineChart() {
   const canvas = document.getElementById("lineChart");
   if (!canvas) return;
@@ -146,6 +158,10 @@ async function buildLineChart() {
 }
 
 // ─── GRAFICO DONUT CATEGORIE ──────────────────────────────────────
+// Costruisce il grafico donut che mostra la distribuzione delle uscite
+// per categoria nel mese corrente.
+// Se esiste già un'istanza precedente la distrugge prima di crearne una nuova,
+// per evitare sovrapposizioni quando i dati vengono aggiornati.
 async function buildChart() {
   const now = new Date();
   const monthBE = now.getMonth() + 1;
@@ -204,6 +220,11 @@ async function buildChart() {
 }
 
 // ─── ULTIME 5 TRANSAZIONI ─────────────────────────────────────────
+// Recupera le ultime 5 transazioni dal server e le renderizza nella lista
+// usando il template HTML definito nel DOM.
+// Per ogni transazione clona il template, popola i campi (data, descrizione,
+// importo, icona categoria) e aggiunge la classe "income" o "expense"
+// per applicare il colore corretto.
 async function fetchLastFiveTransactions() {
   try {
     const res = await authFetch(`/dashboard/last-five`);
@@ -235,6 +256,8 @@ async function fetchLastFiveTransactions() {
   }
 }
 
+// Restituisce il percorso dell'icona corrispondente alla categoria passata.
+// Se la categoria non è mappata usa un'icona generica di fallback.
 function getIconPath(category) {
   const map = {
     Casa: "../assets/home.png",
@@ -249,6 +272,10 @@ function getIconPath(category) {
   return map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png";
 }
 
+// ─── SUBMIT FORM AGGIUNGI TRANSAZIONE ────────────────────────────
+// Intercetta il submit del form, costruisce il payload con i valori inseriti
+// e invia la transazione al server. Mostra un messaggio di esito (verde o rosso)
+// e resetta il form al termine.
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -280,7 +307,10 @@ form.addEventListener("submit", async (e) => {
   modal.style.display = "none";
 });
 
-// ─── TOGGLE INCOME/EXPENSE NEL MODAL ─────────────────────────────
+// ─── TOGGLE INCOME / EXPENSE ──────────────────────────────────────
+// Gestisce la selezione del tipo di transazione tramite i due bottoni
+// "Entrata" e "Uscita". Aggiunge la classe "active" al bottone cliccato
+// e la rimuove dall'altro, garantendo che uno solo sia attivo alla volta.
 document.getElementById("typeIncome").addEventListener("click", () => {
   selectedType = "income";
   document.getElementById("typeIncome").classList.toggle("active");
@@ -298,6 +328,8 @@ document.getElementById("typeExpense").addEventListener("click", () => {
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────
+// Se non c'è un token nel localStorage reindirizza subito al login.
+// Altrimenti imposta le iniziali dell'avatar e carica tutti i dati della dashboard.
 if (!localStorage.getItem("token")) {
   window.location.replace("/");
 }

@@ -1,6 +1,12 @@
+// ─── RIFERIMENTI DOM ──────────────────────────────────────────────
 const form    = document.getElementById('registerForm');
-const message = document.getElementById('message');
+const message = document.getElementById('message'); // messaggio errore step 1
 
+// ─── NAVIGAZIONE TRA STEP ─────────────────────────────────────────
+// Gestisce il flusso a due step del form di registrazione:
+// step 1 (email + password) e step 2 (dati anagrafici).
+// Gli indicatori visivi in cima alla pagina vengono aggiornati
+// insieme al cambio di step aggiungendo/rimuovendo la classe "active".
 document.addEventListener("DOMContentLoaded", () => {
   const step1        = document.getElementById("step1");
   const step2        = document.getElementById("step2");
@@ -9,7 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const indicator1   = document.getElementById("indicator-1");
   const indicator2   = document.getElementById("indicator-2");
 
-  // ─── AVANTI ─────────────────────────────────────────────────
+  // ─── AVANTI ───────────────────────────────────────────────────
+  // Valida i campi dello step 1 prima di procedere:
+  // tutti i campi devono essere compilati, le password devono coincidere
+  // e avere almeno 8 caratteri. In caso di errore mostra il messaggio
+  // inline senza cambiare step.
   nextBtn.addEventListener("click", () => {
     const email           = document.getElementById('email').value;
     const password        = document.getElementById('password').value;
@@ -38,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     indicator2.classList.add("active");
   });
 
-  // ─── INDIETRO ───────────────────────────────────────────────
+  // ─── INDIETRO ─────────────────────────────────────────────────
+  // Torna allo step 1 senza perdere i dati già inseriti.
   backBtn.addEventListener("click", () => {
     step2.classList.remove("active");
     step1.classList.add("active");
@@ -47,7 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ─── SUBMIT ───────────────────────────────────────────────────
+// ─── SUBMIT REGISTRAZIONE ─────────────────────────────────────────
+// Raccoglie tutti i campi di entrambi gli step e invia la richiesta
+// di registrazione al server. In caso di successo mostra un modal
+// e reindirizza al login dopo 2 secondi. In caso di errore mostra
+// il messaggio inline nello step 2 senza resettare il form.
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -62,7 +77,7 @@ form.addEventListener('submit', async (e) => {
   const email           = document.getElementById('email').value;
   const password        = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
-  const message2        = document.getElementById('message2');
+  const message2        = document.getElementById('message2'); // messaggio errore step 2
 
   try {
     const response = await fetch('/auth/register', {
@@ -78,9 +93,8 @@ form.addEventListener('submit', async (e) => {
     const data = await response.json();
 
     if (response.ok) {
-      // mostra modal successo
+      // Mostra il modal di successo e reindirizza al login dopo 2 secondi
       document.getElementById('success-modal').classList.remove('hidden');
-      // dopo 2 secondi vai al login
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);

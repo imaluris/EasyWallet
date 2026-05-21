@@ -4,6 +4,9 @@ const user = {
 }
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
+// Esegue una fetch aggiungendo il token JWT dall'header Authorization.
+// Se il server risponde 401 o 403 (token scaduto o non valido),
+// rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
   const res = await fetch(url, options);
@@ -17,6 +20,10 @@ async function authFetch(url, options = {}) {
   return res;
 }
 
+// Recupera le informazioni del profilo utente dal server e le usa per:
+// - popolare l'oggetto globale `user`
+// - aggiornare avatar, nome e email visibili nella pagina
+// - pre-compilare i campi del form di modifica profilo
 async function getInfoProfile() {
   const token = localStorage.getItem('token');
   try {
@@ -43,15 +50,6 @@ async function getInfoProfile() {
       document.getElementById('full_name').textContent  = user.first_name + ' ' + user.last_name;
       document.getElementById('email').textContent      = user.email;
 
-      document.getElementById('display-first_name').textContent  = user.first_name;
-      document.getElementById('display-last_name').textContent   = user.last_name;
-      document.getElementById('display-birth_date').textContent  = date.toLocaleDateString('it-IT');
-      document.getElementById('display-address').textContent     = user.address  || '—';
-      document.getElementById('display-city').textContent        = user.city     || '—';
-      document.getElementById('display-cap').textContent         = user.cap      || '—';
-      document.getElementById('display-province').textContent    = user.province || '—';
-      document.getElementById('display-phone').textContent       = user.phone    || '—';
-
       document.getElementById('first_name').value  = user.first_name;
       document.getElementById('last_name').value   = user.last_name;
       document.getElementById('birth_date').value  = user.birth_date;
@@ -69,6 +67,10 @@ async function getInfoProfile() {
   }
 }
 
+// Legge i valori dal form di cambio password e invia la richiesta al server.
+// Valida che la nuova password e la conferma coincidano e che sia
+// diversa da quella attuale, prima di effettuare la chiamata.
+// In caso di successo chiude il modal e resetta il form.
 async function changePassword() {
   const currentPassword  = document.getElementById('current-psw').value;
   const newPassword      = document.getElementById('new-psw').value;
@@ -105,6 +107,9 @@ async function changePassword() {
   }
 }
 
+// Legge i valori dal form di modifica profilo e invia la richiesta al server.
+// In caso di successo chiude il modal e richiama getInfoProfile()
+// per aggiornare immediatamente i dati visualizzati nella pagina.
 async function updateProfile() {
   const errorDiv = document.getElementById('error-message');
   const payload  = {
@@ -139,6 +144,8 @@ async function updateProfile() {
   }
 }
 
+// Invia la richiesta di eliminazione account al server.
+// Dopo la conferma del server mostra un alert e reindirizza al login.
 async function deleteProfile() {
   try {
     const response = await authFetch('/user/deleteUser', {
@@ -158,6 +165,10 @@ async function deleteProfile() {
   }
 }
 
+// Apre il modal corrispondente al tipo passato come parametro
+// ("logout", "delete", "changePsw", "changeProfile").
+// Gestisce i bottoni di conferma e annulla, e chiude il modal
+// anche cliccando fuori dal contenuto (sull'overlay).
 function openModal(type) {
   let modal, confirmBtn, cancelBtn;
 
@@ -218,6 +229,8 @@ function openModal(type) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
+// Se non c'è un token nel localStorage reindirizza subito al login,
+// altrimenti carica i dati del profilo e registra i listener sui bottoni.
 if (!localStorage.getItem("token")) {
   window.location.replace("/");
 }

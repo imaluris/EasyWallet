@@ -1,59 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — EasyWallet</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — EasyWallet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-
-<body class="login">
-
-  <div class="login-layout">
-
-    <!-- SINISTRA: branding -->
-    <div class="login-brand">
-      <div class="login-logo">E</div>
-      <div class="login-brand-name">EasyWallet</div>
-      <div class="login-brand-sub">Tieni sotto controllo<br>le tue finanze.</div>
-    </div>
-
-    <!-- DESTRA: form -->
-    <div class="login-form-wrap">
-      <div class="login-card">
-
-        <div class="login-card-header">
-          <h1 class="login-title">Bentornato</h1>
-          <p class="login-subtitle">Inserisci le tue credenziali per accedere</p>
+  <body class="login">
+    <div class="login-layout">
+      <!-- SINISTRA: branding -->
+      <div class="login-brand">
+        <div class="login-brand-name">EasyWallet</div>
+        <div class="login-brand-sub">
+          Tieni sotto controllo<br />le tue finanze.
         </div>
+      </div>
 
-        <form id="loginForm">
-          <div class="login-field">
-            <label class="login-label">Email</label>
-            <input type="email" class="login-input" id="email" name="email" placeholder="nome@email.com" required>
+      <!-- DESTRA: form -->
+      <div class="login-form-wrap">
+        <div class="login-card">
+          <div class="login-card-header">
+            <h1 class="login-title">Bentornato</h1>
+            <p class="login-subtitle">
+              Inserisci le tue credenziali per accedere
+            </p>
           </div>
 
-          <div class="login-field">
-            <label class="login-label">Password</label>
-            <input type="password" class="login-input" id="password" name="password" placeholder="••••••••" required>
-          </div>
+          <form id="loginForm">
+            <div class="login-field">
+              <label class="login-label">Email</label>
+              <input
+                type="email"
+                class="login-input"
+                id="email"
+                name="email"
+                placeholder="nome@email.com"
+                required
+              />
+            </div>
 
-          <p id="message" class="login-message"></p>
+            <div class="login-field">
+              <label class="login-label">Password</label>
+              <input
+                type="password"
+                class="login-input"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-          <button type="submit" class="login-btn">Accedi</button>
-        </form>
+            <p id="message" class="login-message"></p>
 
-        <p class="login-register">
-          Non hai un account? <a href="pages/register.html" class="login-link">Registrati</a>
-        </p>
+            <button type="submit" class="login-btn">Accedi</button>
+          </form>
 
+          <p class="login-register">
+            Non hai un account?
+            <a href="pages/register.html" class="login-link">Registrati</a>
+          </p>
+        </div>
       </div>
     </div>
 
-  </div>
-
-  <script src="js/login.js"></script>
-</body>
+    <script src="js/login.js"></script>
+  </body>
 </html>
