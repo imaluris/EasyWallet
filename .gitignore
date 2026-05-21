@@ -8,7 +8,15 @@ BE/.env
 *.log
 
 # Config DB
+BE/easywallet_backup.sql
 BE/db.js
+*.sql
+
+#MAC FILE
+BE/routes/._*
+BE/controllers/._*
+BE/._*
+
 
 # IDE / OS files
 .DS_Store
