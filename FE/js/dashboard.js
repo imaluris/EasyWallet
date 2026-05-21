@@ -8,33 +8,44 @@ const initials = localStorage.getItem("userInitials");
 let chartInstance = null;
 let selectedType = null;
 
+// ─── AUTH FETCH ───────────────────────────────────────────────────
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: "Bearer " + token,
+      ...options.headers,
+    },
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem("token");
+    window.location.replace("/");
+    return;
+  }
+
+  return res;
+}
+
 // ─── SALDO / ENTRATE / USCITE ────────────────────────────────────
 async function getBalance() {
-  const token = localStorage.getItem("token");
   const now = new Date();
   const monthBE = now.getMonth() + 1;
   const currentYear = now.getFullYear();
 
   try {
-    const res = await fetch(
-      `/dashboard/summary?month=${monthBE}&year=${currentYear}`,
-      { headers: { Authorization: "Bearer " + token } },
+    const res = await authFetch(
+      `/dashboard/summary?month=${monthBE}&year=${currentYear}`
     );
     const data = await res.json();
 
     if (res.ok) {
-      // Saldo — usa classe CSS invece di style inline
       const balanceEl = document.getElementById("balance");
       balanceEl.textContent = `€${Math.abs(data.balance)}`;
       balanceEl.classList.toggle("negative", data.balance < 0);
-
-      // Entrate
-      document.getElementById("income").textContent =
-        `€${Math.abs(data.income)}`;
-
-      // Uscite
-      document.getElementById("expense").textContent =
-        `€${Math.abs(data.expense)}`;
+      document.getElementById("income").textContent = `€${Math.abs(data.income)}`;
+      document.getElementById("expense").textContent = `€${Math.abs(data.expense)}`;
     } else {
       console.error(data.message);
     }
@@ -48,27 +59,22 @@ async function buildLineChart() {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
-  const token = localStorage.getItem("token");
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
   const daysInMonth = new Date(year, month, 0).getDate();
 
-  // Fetch dati reali
-  const res = await fetch(
-    `/dashboard/income-expense-monthly?month=${month}&year=${year}`,
-    { headers: { Authorization: "Bearer " + token } },
+  const res = await authFetch(
+    `/dashboard/income-expense-monthly?month=${month}&year=${year}`
   );
   const rows = await res.json();
 
-  // Riempie array da 1 a daysInMonth con 0 di default
   const incomeData = Array(daysInMonth).fill(0);
   const expenseData = Array(daysInMonth).fill(0);
 
   rows.forEach((row) => {
     if (row.type === "income") incomeData[row.day - 1] = parseFloat(row.total);
-    if (row.type === "expense")
-      expenseData[row.day - 1] = parseFloat(row.total);
+    if (row.type === "expense") expenseData[row.day - 1] = parseFloat(row.total);
   });
 
   const labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
@@ -110,11 +116,7 @@ async function buildLineChart() {
           display: true,
           position: "top",
           align: "end",
-          labels: {
-            color: "#6b6a80",
-            font: { family: "DM Mono", size: 12 },
-            usePointStyle: true,
-          },
+          labels: { color: "#6b6a80", font: { family: "DM Mono", size: 12 }, usePointStyle: true },
         },
         tooltip: {
           backgroundColor: "#1a1a24",
@@ -122,9 +124,7 @@ async function buildLineChart() {
           borderWidth: 1,
           titleColor: "#6b6a80",
           bodyColor: "#f0eff5",
-          callbacks: {
-            label: (ctx) => ` €${ctx.parsed.y.toLocaleString("it-IT")}`,
-          },
+          callbacks: { label: (ctx) => ` €${ctx.parsed.y.toLocaleString("it-IT")}` },
         },
       },
       scales: {
@@ -147,15 +147,13 @@ async function buildLineChart() {
 
 // ─── GRAFICO DONUT CATEGORIE ──────────────────────────────────────
 async function buildChart() {
-  const token = localStorage.getItem("token");
   const now = new Date();
   const monthBE = now.getMonth() + 1;
   const currentYear = now.getFullYear();
 
   try {
-    const res = await fetch(
-      `/dashboard/category-totals?month=${monthBE}&year=${currentYear}`,
-      { headers: { Authorization: "Bearer " + token } },
+    const res = await authFetch(
+      `/dashboard/category-totals?month=${monthBE}&year=${currentYear}`
     );
     const categories = await res.json();
 
@@ -175,14 +173,7 @@ async function buildChart() {
           {
             label: "Totale per categoria",
             data: values,
-            backgroundColor: [
-              "#c8ff57",
-              "#ff5c5c",
-              "#5c9fff",
-              "#a855f7",
-              "#f59e0b",
-              "#10b981",
-            ],
+            backgroundColor: ["#c8ff57", "#ff5c5c", "#5c9fff", "#a855f7", "#f59e0b", "#10b981"],
             borderColor: "#111118",
             borderWidth: 3,
           },
@@ -194,12 +185,7 @@ async function buildChart() {
         plugins: {
           legend: {
             position: "bottom",
-            labels: {
-              color: "#6b6a80",
-              font: { family: "DM Mono", size: 12 },
-              padding: 16,
-              usePointStyle: true,
-            },
+            labels: { color: "#6b6a80", font: { family: "DM Mono", size: 12 }, padding: 16, usePointStyle: true },
           },
           tooltip: {
             backgroundColor: "#1a1a24",
@@ -207,9 +193,7 @@ async function buildChart() {
             borderWidth: 1,
             titleColor: "#6b6a80",
             bodyColor: "#f0eff5",
-            callbacks: {
-              label: (ctx) => ` €${ctx.parsed.toLocaleString("it-IT")}`,
-            },
+            callbacks: { label: (ctx) => ` €${ctx.parsed.toLocaleString("it-IT")}` },
           },
         },
       },
@@ -221,12 +205,8 @@ async function buildChart() {
 
 // ─── ULTIME 5 TRANSAZIONI ─────────────────────────────────────────
 async function fetchLastFiveTransactions() {
-  const token = localStorage.getItem("token");
-
   try {
-    const res = await fetch(`/dashboard/last-five`, {
-      headers: { Authorization: "Bearer " + token },
-    });
+    const res = await authFetch(`/dashboard/last-five`);
     const data = await res.json();
 
     const list = document.getElementById("list");
@@ -238,21 +218,14 @@ async function fetchLastFiveTransactions() {
     data.forEach((t) => {
       const clone = template.content.cloneNode(true);
       const div = clone.querySelector(".transaction");
-      div.classList.add(t.type); // aggiunge .income o .expense → CSS colora tutto
+      div.classList.add(t.type);
 
       const d = new Date(t.date);
       div.querySelector(".day").textContent = d.getDate();
-      div.querySelector(".month").textContent = d.toLocaleString("it-IT", {
-        month: "long",
-      });
-      div.querySelector(".time").textContent = d.toLocaleTimeString("it-IT", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
+      div.querySelector(".month").textContent = d.toLocaleString("it-IT", { month: "long" });
+      div.querySelector(".time").textContent = d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
       div.querySelector(".description").textContent = t.description;
-      div.querySelector(".amount").textContent =
-        `${t.type === "income" ? "+" : "−"}€${t.amount}`;
+      div.querySelector(".amount").textContent = `${t.type === "income" ? "+" : "−"}€${t.amount}`;
       div.querySelector(".tx-icon-img").src = getIconPath(t.category);
 
       list.appendChild(clone);
@@ -273,19 +246,14 @@ function getIconPath(category) {
     viaggi: "../assets/travel.png",
     sport: "../assets/sports.png",
   };
-  return (
-    map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png"
-  );
+  return map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png";
 }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const token = localStorage.getItem("token");
   const payload = {
-    type: document.getElementById("typeIncome").classList.contains("active")
-      ? "income"
-      : "expense",
+    type: document.getElementById("typeIncome").classList.contains("active") ? "income" : "expense",
     description: document.getElementById("quickDescription").value,
     amount: document.getElementById("quickAmount").value,
     category: document.getElementById("quickCategory").value,
@@ -293,17 +261,11 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    const res = await fetch(
-      "/transaction/addTransaction",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify(payload),
-      },
-    );
+    const res = await authFetch("/transaction/addTransaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
     const data = await res.json();
 
     message.style.color = res.ok ? "var(--accent)" : "var(--accent2)";
@@ -319,7 +281,6 @@ form.addEventListener("submit", async (e) => {
 });
 
 // ─── TOGGLE INCOME/EXPENSE NEL MODAL ─────────────────────────────
-
 document.getElementById("typeIncome").addEventListener("click", () => {
   selectedType = "income";
   document.getElementById("typeIncome").classList.toggle("active");
@@ -337,9 +298,13 @@ document.getElementById("typeExpense").addEventListener("click", () => {
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────
+if (!localStorage.getItem("token")) {
+  window.location.replace("/");
+}
+
 document.getElementById("avatar").textContent = initials;
 
 getBalance();
-buildLineChart(); // placeholder — nessuna fetch
-buildChart(); // donut con fetch reale
+buildLineChart();
+buildChart();
 fetchLastFiveTransactions();

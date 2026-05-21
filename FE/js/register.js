@@ -82,7 +82,7 @@ form.addEventListener('submit', async (e) => {
       document.getElementById('success-modal').classList.remove('hidden');
       // dopo 2 secondi vai al login
       setTimeout(() => {
-        window.location.href = '../index.html';
+        window.location.href = '/';
       }, 2000);
     } else {
       message2.style.color = 'var(--db-accent2)';

@@ -1,12 +1,12 @@
 // backend/db.js
 const mysql = require('mysql2');
 
-// Configura la connessione
+require('dotenv').config();
+
 const pool = mysql.createPool({
-  host: 'localhost',      // indirizzo del DB
-  user: 'root',           // utente DB
-  password: 'Roland1993?',   // password DB
-  database: 'EasyWalletDB' // nome del DB che hai creato
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME
 });
 
 module.exports = pool.promise();

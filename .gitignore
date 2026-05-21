@@ -1,8 +1,8 @@
 # Node dependencies
-backend/node_modules/
+BE/node_modules/
 
 # Env files
-backend/.env
+BE/.env
 
 # Log files
 *.log
@@ -12,3 +12,8 @@ backend/.env
 .vscode/
 .idea/
 
+# macOS
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes

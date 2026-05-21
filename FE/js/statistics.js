@@ -1,5 +1,18 @@
-const token = localStorage.getItem("token");
 const initials = localStorage.getItem("userInitials");
+
+// ─── AUTH FETCH ───────────────────────────────────────────────────
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(url, options);
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem("token");
+    window.location.replace("/");
+    return;
+  }
+
+  return res;
+}
 
 // ─── ULTIMI 12 MESI SCORREVOLI ────────────────────────────────
 function buildRolling12() {
@@ -10,16 +23,13 @@ function buildRolling12() {
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     labels.push(d.toLocaleString("it-IT", { month: "short", year: "numeric" }));
-    keys.push(
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-    );
+    keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
   }
   return { labels, keys };
 }
 
 const { labels: rollingLabels, keys: rollingKeys } = buildRolling12();
 
-// Mappe indicizzate per "YYYY-MM"
 const incomeMap = new Map(rollingKeys.map((k) => [k, 0]));
 const expenseMap = new Map(rollingKeys.map((k) => [k, 0]));
 const balanceMap = new Map(rollingKeys.map((k) => [k, 0]));
@@ -28,15 +38,14 @@ let totalTransactions = 0;
 
 // ─── FETCH TUTTE LE TRANSAZIONI + POPOLA MAPPE ───────────────
 async function loadAllData() {
-  const res = await fetch("/transaction/list", {
+  const token = localStorage.getItem("token");
+  const res = await authFetch("/transaction/list", {
     headers: { Authorization: "Bearer " + token },
   });
   const data = await res.json();
 
-  // ordina per data crescente per calcolare il cumulativo correttamente
   data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  // running balance che tiene conto di TUTTE le transazioni storiche
   let runningBalance = 0;
 
   data.forEach((t) => {
@@ -55,14 +64,11 @@ async function loadAllData() {
       balanceMap.set(key, runningBalance);
     }
 
-    // categorie uscite (per donut e top uscite)
     if (t.type === "expense") {
       categoryMap.set(t.category, (categoryMap.get(t.category) ?? 0) + amount);
     }
   });
 
-  // ─── CORREGGI MESI SENZA TRANSAZIONI ──────────────────────
-  // Calcola il saldo iniziale prima del primo mese del range
   let lastBalance = 0;
   data.forEach((t) => {
     const d = new Date(t.date);
@@ -72,7 +78,6 @@ async function loadAllData() {
     }
   });
 
-  // Per i mesi senza transazioni, eredita il balance del mese precedente
   rollingKeys.forEach((key) => {
     if (incomeMap.get(key) === 0 && expenseMap.get(key) === 0) {
       balanceMap.set(key, lastBalance);
@@ -87,18 +92,9 @@ function buildKPI() {
   const now = new Date();
   const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-  setEl(
-    "stat-income",
-    `€ ${incomeMap.get(currentKey).toLocaleString("it-IT")}`,
-  );
-  setEl(
-    "stat-expense",
-    `€ ${expenseMap.get(currentKey).toLocaleString("it-IT")}`,
-  );
-  setEl(
-    "stat-balance",
-    `€ ${balanceMap.get(currentKey).toLocaleString("it-IT")}`,
-  );
+  setEl("stat-income", `€ ${incomeMap.get(currentKey).toLocaleString("it-IT")}`);
+  setEl("stat-expense", `€ ${expenseMap.get(currentKey).toLocaleString("it-IT")}`);
+  setEl("stat-balance", `€ ${balanceMap.get(currentKey).toLocaleString("it-IT")}`);
   setEl("stat-count", totalTransactions);
 }
 
@@ -207,14 +203,7 @@ function buildCategoryChart() {
       datasets: [
         {
           data: entries.map(([, v]) => v),
-          backgroundColor: [
-            "#c8ff57",
-            "#ff5c5c",
-            "#5c9fff",
-            "#a855f7",
-            "#f59e0b",
-            "#10b981",
-          ],
+          backgroundColor: ["#c8ff57", "#ff5c5c", "#5c9fff", "#a855f7", "#f59e0b", "#10b981"],
           borderColor: "#111118",
           borderWidth: 3,
         },
@@ -226,12 +215,7 @@ function buildCategoryChart() {
       plugins: {
         legend: {
           position: "right",
-          labels: {
-            color: "#6b6a80",
-            font: { family: "DM Mono", size: 11 },
-            padding: 14,
-            usePointStyle: true,
-          },
+          labels: { color: "#6b6a80", font: { family: "DM Mono", size: 11 }, padding: 14, usePointStyle: true },
         },
         tooltip: {
           backgroundColor: "#1a1a24",
@@ -239,9 +223,7 @@ function buildCategoryChart() {
           borderWidth: 1,
           titleColor: "#6b6a80",
           bodyColor: "#f0eff5",
-          callbacks: {
-            label: (ctx) => ` €${ctx.parsed.toLocaleString("it-IT")}`,
-          },
+          callbacks: { label: (ctx) => ` €${ctx.parsed.toLocaleString("it-IT")}` },
         },
       },
     },
@@ -253,10 +235,7 @@ function buildTopList() {
   const container = document.getElementById("top-list");
   if (!container || !categoryMap.size) return;
 
-  const sorted = [...categoryMap.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
+  const sorted = [...categoryMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const max = sorted[0][1];
 
   sorted.forEach(([name, value]) => {
@@ -286,13 +265,16 @@ function getIconPath(category) {
     viaggi: "../assets/travel.png",
     sport: "../assets/sports.png",
   };
-  return (
-    map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png"
-  );
+  return map[category] || "https://cdn-icons-png.flaticon.com/512/565/565547.png";
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
 async function init() {
+  if (!localStorage.getItem("token")) {
+    window.location.replace("/");
+    return;
+  }
+
   document.getElementById("avatar").textContent = initials;
 
   await loadAllData();

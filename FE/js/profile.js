@@ -3,10 +3,24 @@ const user = {
   address: "", city: "", cap: "", province: 0, phone: "",
 }
 
+// ─── AUTH FETCH ───────────────────────────────────────────────────
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(url, options);
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem("token");
+    window.location.replace("/");
+    return;
+  }
+
+  return res;
+}
+
 async function getInfoProfile() {
   const token = localStorage.getItem('token');
   try {
-    const res  = await fetch('/user/userInfo', {
+    const res  = await authFetch('/user/userInfo', {
       headers: { "Authorization": "Bearer " + token }
     });
     const data = await res.json();
@@ -23,14 +37,12 @@ async function getInfoProfile() {
       user.province   = data.userInfo.province;
       user.phone      = data.userInfo.phone;
 
-      // ─── Avatar e info header ───────────────────────────────
       const initials = (user.first_name[0] + user.last_name[0]).toUpperCase();
       document.getElementById('avatar').textContent     = initials;
       document.getElementById('avatar-big').textContent = initials;
       document.getElementById('full_name').textContent  = user.first_name + ' ' + user.last_name;
       document.getElementById('email').textContent      = user.email;
 
-      // ─── Campi display (colonna destra) ─────────────────────
       document.getElementById('display-first_name').textContent  = user.first_name;
       document.getElementById('display-last_name').textContent   = user.last_name;
       document.getElementById('display-birth_date').textContent  = date.toLocaleDateString('it-IT');
@@ -40,7 +52,6 @@ async function getInfoProfile() {
       document.getElementById('display-province').textContent    = user.province || '—';
       document.getElementById('display-phone').textContent       = user.phone    || '—';
 
-      // ─── Valori negli input della modal modifica profilo ────
       document.getElementById('first_name').value  = user.first_name;
       document.getElementById('last_name').value   = user.last_name;
       document.getElementById('birth_date').value  = user.birth_date;
@@ -74,7 +85,7 @@ async function changePassword() {
   }
 
   try {
-    const response = await fetch('/user/changePassword', {
+    const response = await authFetch('/user/changePassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +119,7 @@ async function updateProfile() {
   };
 
   try {
-    const response = await fetch('/user/updateProfile', {
+    const response = await authFetch('/user/updateProfile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -122,7 +133,7 @@ async function updateProfile() {
 
     alert('Profilo aggiornato con successo');
     document.getElementById('modifyProfile-modal').classList.add('hidden');
-    getInfoProfile(); // aggiorna i campi display
+    getInfoProfile();
   } catch (error) {
     errorDiv.textContent = 'Errore di connessione';
   }
@@ -130,7 +141,7 @@ async function updateProfile() {
 
 async function deleteProfile() {
   try {
-    const response = await fetch('/user/deleteUser', {
+    const response = await authFetch('/user/deleteUser', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +169,7 @@ function openModal(type) {
       confirmBtn.onclick = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("userInitials");
-        window.location.href = window.location.origin;
+        window.location.replace("/");
       };
       break;
 
@@ -168,7 +179,7 @@ function openModal(type) {
       cancelBtn  = document.getElementById("cancel-delete");
       confirmBtn.onclick = () => {
         deleteProfile();
-        window.location.href = window.location.origin;
+        window.location.replace(window.location.origin);
       };
       break;
 
@@ -198,7 +209,6 @@ function openModal(type) {
       };
     }
 
-    // chiudi cliccando fuori
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.classList.add('hidden');
@@ -208,6 +218,10 @@ function openModal(type) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
+if (!localStorage.getItem("token")) {
+  window.location.replace("/");
+}
+
 getInfoProfile();
 
 document.getElementById("logout-btn").addEventListener("click",        () => openModal("logout"));
