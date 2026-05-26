@@ -30,4 +30,18 @@ app.use(express.static('../FE'));
 
 
 
-app.listen(port, '0.0.0.0', () => console.log(`Server in ascolto su http://192.168.200.108:${port}`));
+app.listen(port, '0.0.0.0', () => {
+    const { networkInterfaces } = require('os');
+    const nets = networkInterfaces();
+    let localIP = 'localhost';
+    for (const iface of Object.values(nets)) {
+        for (const net of iface) {
+            if (net.family === 'IPv4' && !net.internal) {
+                localIP = net.address;
+                break;
+            }
+        }
+    }
+    console.log(`Server in ascolto su http://localhost:${port}`);
+    console.log(`Accesso da rete locale: http://${localIP}:${port}`);
+});

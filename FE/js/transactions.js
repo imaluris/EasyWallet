@@ -199,6 +199,5 @@ document.getElementById("sort-select").addEventListener("change", (e) => {
 if (!localStorage.getItem("token")) {
   window.location.replace("/");
 }
-
 document.getElementById("avatar").textContent = initials;
 fetchTransactions();

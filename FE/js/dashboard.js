@@ -15,13 +15,7 @@ let selectedType = null;  // tipo di transazione selezionato ("income" o "expens
 // rimuove il token dal localStorage e reindirizza al login.
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      Authorization: "Bearer " + token,
-      ...options.headers,
-    },
-  });
+  const res = await fetch(url, options);
 
   if (res.status === 401 || res.status === 403) {
     localStorage.removeItem("token");
@@ -43,7 +37,8 @@ async function getBalance() {
 
   try {
     const res = await authFetch(
-      `/dashboard/summary?month=${monthBE}&year=${currentYear}`
+      `/dashboard/summary?month=${monthBE}&year=${currentYear}`,
+      { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
     );
     const data = await res.json();
 
@@ -77,7 +72,8 @@ async function buildLineChart() {
   const daysInMonth = new Date(year, month, 0).getDate();
 
   const res = await authFetch(
-    `/dashboard/income-expense-monthly?month=${month}&year=${year}`
+    `/dashboard/income-expense-monthly?month=${month}&year=${year}`,
+    { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
   );
   const rows = await res.json();
 
@@ -169,7 +165,8 @@ async function buildChart() {
 
   try {
     const res = await authFetch(
-      `/dashboard/category-totals?month=${monthBE}&year=${currentYear}`
+      `/dashboard/category-totals?month=${monthBE}&year=${currentYear}`,
+      { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
     );
     const categories = await res.json();
 
@@ -227,7 +224,9 @@ async function buildChart() {
 // per applicare il colore corretto.
 async function fetchLastFiveTransactions() {
   try {
-    const res = await authFetch(`/dashboard/last-five`);
+    const res = await authFetch(`/dashboard/last-five`, {
+      headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+    });
     const data = await res.json();
 
     const list = document.getElementById("list");
@@ -290,7 +289,10 @@ form.addEventListener("submit", async (e) => {
   try {
     const res = await authFetch("/transaction/addTransaction", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
       body: JSON.stringify(payload),
     });
     const data = await res.json();

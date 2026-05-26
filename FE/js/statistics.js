@@ -304,22 +304,19 @@ function getIconPath(category) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────
-// Se non c'è un token reindirizza al login. Altrimenti carica tutti i dati
-// e costruisce in sequenza KPI, grafici e lista top categorie.
-async function init() {
-  if (!localStorage.getItem("token")) {
-    window.location.replace("/");
-    return;
-  }
+// Se non c'è un token nel localStorage reindirizza subito al login.
+// Altrimenti imposta le iniziali dell'avatar, carica i dati e costruisce
+// in sequenza KPI, grafici e lista top categorie.
+if (!localStorage.getItem("token")) {
+  window.location.replace("/");
+}
 
-  document.getElementById("avatar").textContent = initials;
+document.getElementById("avatar").textContent = initials;
 
-  await loadAllData();
+loadAllData().then(() => {
   buildKPI();
   buildFirstChart();
   buildSecondChart();
   buildCategoryChart();
   buildTopList();
-}
-
-init();
+});
