@@ -1,35 +1,50 @@
+// server.js
+// Punto di ingresso dell'applicazione Express.
+// Configura i middleware globali, registra tutte le rotte API e avvia
+// il server sulla porta 3000, rendendolo accessibile sia da localhost
+// che da altri dispositivi sulla stessa rete locale.
+
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
-const authRoutes = require('./routes/auth');
+const cors    = require('cors');
+const authRoutes        = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
-const dashboardRoutes = require('./routes/dashboard');
-const userRoutes = require('./routes/user');
-const savingsRoutes = require('./routes/savings');
+const dashboardRoutes   = require('./routes/dashboard');
+const userRoutes        = require('./routes/user');
+const savingsRoutes     = require('./routes/savings');
 
-const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000","http://192.168.200.108:3000"];
-
-const app = express();
+const app  = express();
 const port = 3000;
 
-// Abilita CORS a tutti per permettere l'accesso da qualsiasi origine (se necessario, posso restringerlo a specifici domini )
+// ─── MIDDLEWARE GLOBALI ───────────────────────────────────────────
+// cors() abilita le richieste cross-origin, necessario per il frontend
+// servito da un'origine diversa durante lo sviluppo con Live Server.
+// express.json() permette di leggere il body delle richieste in JSON.
 app.use(cors());
-
-// Middleware per leggere JSON
 app.use(express.json());
 
-// Rotte di autenticazione
-app.use('/auth', authRoutes);
+// ─── ROTTE API ────────────────────────────────────────────────────
+// Ogni gruppo di rotte è montato su un prefisso dedicato.
+// Il middleware authenticateToken è applicato sulle singole rotte
+// nei file di routing per proteggere gli endpoint che richiedono autenticazione.
+app.use('/auth',        authRoutes);
 app.use('/transaction', transactionRoutes);
-app.use('/dashboard', dashboardRoutes);
-app.use('/user', userRoutes);
+app.use('/dashboard',   dashboardRoutes);
+app.use('/user',        userRoutes);
 app.use('/api/savings', savingsRoutes);
 
+// ─── FILE STATICI ─────────────────────────────────────────────────
+// Serve i file del frontend (HTML, CSS, JS, assets) dalla cartella FE.
+// Questo consente di accedere all'applicazione su http://localhost:3000
+// senza dover avviare un server separato per il frontend.
 app.use(express.static('../FE'));
 
-
-
+// ─── AVVIO SERVER ─────────────────────────────────────────────────
+// Il server ascolta su 0.0.0.0 per essere raggiungibile anche da altri
+// dispositivi sulla stessa rete locale (es. smartphone o tablet).
+// All'avvio rileva automaticamente l'IP locale della macchina e lo stampa
+// in console insieme all'indirizzo localhost.
 app.listen(port, '0.0.0.0', () => {
     const { networkInterfaces } = require('os');
     const nets = networkInterfaces();

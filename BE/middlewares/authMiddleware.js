@@ -1,5 +1,16 @@
+// middlewares/authMiddleware.js
+// Middleware di autenticazione JWT applicato a tutte le rotte protette.
+// Viene eseguito prima del controller e si occupa di verificare che
+// la richiesta provenga da un utente autenticato con un token valido.
+
 const jwt = require('jsonwebtoken');
 
+// ─── VERIFICA TOKEN JWT ───────────────────────────────────────────
+// Estrae il token dall'header Authorization nel formato "Bearer <token>".
+// Restituisce 401 se il token è assente, 403 se non è valido o scaduto.
+// Se la verifica ha successo, aggiunge userId e userEmail all'oggetto req
+// così i controller successivi possono identificare l'utente senza fare
+// ulteriori query al database.
 module.exports = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
@@ -15,7 +26,8 @@ module.exports = (req, res, next) => {
             return res.status(403).json({ message: "Token valido ma senza id" });
         }
 
-        req.userId = decoded.id;
+        // Aggiunge i dati dell'utente decodificati alla richiesta
+        req.userId    = decoded.id;
         req.userEmail = decoded.email || null;
 
         next();

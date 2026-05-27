@@ -167,8 +167,8 @@ async function createGoal(name, target, saved) {
   if (!res.ok) throw new Error(goal.error);
 
   if (parseFloat(saved) > 0) {
-    await authFetch(`${API}/savings/${goal.id}`, {
-      method: "PATCH",
+    await authFetch(`${API}/savings/update?id=${goal.id}`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -184,8 +184,8 @@ async function createGoal(name, target, saved) {
 // poi ricarica tutti i dati con load().
 async function updateGoal(id, saved) {
   const token = localStorage.getItem("token");
-  const res = await authFetch(`${API}/savings/${id}`, {
-    method: "PATCH",
+  const res = await authFetch(`${API}/savings/update?id=${id}`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -199,7 +199,7 @@ async function updateGoal(id, saved) {
 // Elimina un obiettivo dal server tramite DELETE e ricarica i dati.
 async function deleteGoal(id) {
   const token = localStorage.getItem("token");
-  await authFetch(`${API}/savings/${id}`, {
+  await authFetch(`${API}/savings/delete?id=${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });

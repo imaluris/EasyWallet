@@ -58,43 +58,21 @@
                 </div>
               </div>
               <div class="kpi-grid" id="cards-list">
-                <template id="card-template">
-                  <div class="card-income">
-                    <div class="first-row">
-                      <img src="" alt="categoria" />
-                    </div>
-                    <div class="second-row">
-                      <span class="category"></span>
-                    </div>
-                    <div class="third-row">
-                      <span class="income"></span>
-                    </div>
-                    <div class="fourth-row">
-                      <span class="currency"></span>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- KPI statici — puoi renderizzarli via JS se hai i dati -->
                 <div class="kpi-card income-kpi">
                   <div class="kpi-value" id="stat-income"></div>
                   <div class="kpi-label">Entrate totali</div>
-                  <div class="kpi-delta positive" id="stat-income-delta"></div>
                 </div>
                 <div class="kpi-card expense-kpi">
                   <div class="kpi-value" id="stat-expense"></div>
                   <div class="kpi-label">Uscite totali</div>
-                  <div class="kpi-delta negative" id="stat-expense-delta"></div>
                 </div>
                 <div class="kpi-card">
                   <div class="kpi-value" id="stat-balance"></div>
                   <div class="kpi-label">Risparmio netto</div>
-                  <div class="kpi-delta positive" id="stat-balance-delta"></div>
                 </div>
                 <div class="kpi-card accent3-kpi">
                   <div class="kpi-value" id="stat-count"></div>
                   <div class="kpi-label">Transazioni</div>
-                  <div class="kpi-delta positive" id="stat-count-delta"></div>
                 </div>
               </div>
             </div>
@@ -140,7 +118,7 @@
                 <div class="panel-header">
                   <div>
                     <div class="panel-title">Uscite per categoria</div>
-                    <div class="panel-subtitle">Anno corrente</div>
+                    <div class="panel-subtitle">Degli ultimi 12 mesi</div>
                   </div>
                 </div>
                 <canvas id="categoryChart" class="donut-canvas"></canvas>
@@ -151,7 +129,7 @@
                 <div class="panel-header">
                   <div>
                     <div class="panel-title">Top uscite</div>
-                    <div class="panel-subtitle">Le maggiori dell'anno</div>
+                    <div class="panel-subtitle">Le maggiori degli ultimi 12 mesi</div>
                   </div>
                 </div>
                 <div class="top-list" id="top-list"></div>

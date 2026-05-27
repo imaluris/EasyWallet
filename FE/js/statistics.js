@@ -41,7 +41,7 @@ const { labels: rollingLabels, keys: rollingKeys } = buildRolling12();
 const incomeMap  = new Map(rollingKeys.map((k) => [k, 0]));  // entrate per mese
 const expenseMap = new Map(rollingKeys.map((k) => [k, 0])); // uscite per mese
 const balanceMap = new Map(rollingKeys.map((k) => [k, 0])); // saldo cumulativo per mese
-const categoryMap = new Map(); // totale uscite per categoria (su tutti i dati storici)
+const categoryMap = new Map(); // totale uscite per categoria (ultimi 12 mesi)
 let totalTransactions = 0;     // contatore totale transazioni
 
 // ─── CARICAMENTO E POPOLAMENTO MAPPE ─────────────────────────────
@@ -77,7 +77,7 @@ async function loadAllData() {
       balanceMap.set(key, runningBalance);
     }
 
-    if (t.type === "expense") {
+    if (t.type === "expense" && rollingKeys.includes(key)) {
       categoryMap.set(t.category, (categoryMap.get(t.category) ?? 0) + amount);
     }
   });
