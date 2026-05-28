@@ -6,8 +6,9 @@ const form = document.getElementById("quickForm");
 const message = document.getElementById("message");
 const initials = localStorage.getItem("userInitials");
 
-let chartInstance = null; // istanza del grafico donut, salvata per poterla distruggere e ricreare
-let selectedType = null;  // tipo di transazione selezionato ("income" o "expense")
+let chartInstance = null;     // istanza del grafico donut
+let lineChartInstance = null; // istanza del grafico a linee andamento
+let selectedType = null;      // tipo di transazione selezionato ("income" o "expense")
 
 // ─── AUTH FETCH ───────────────────────────────────────────────────
 // Esegue una fetch aggiungendo automaticamente il token JWT nell'header.
@@ -87,7 +88,9 @@ async function buildLineChart() {
 
   const labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
 
-  new Chart(ctx, {
+  if (lineChartInstance) lineChartInstance.destroy();
+
+  lineChartInstance = new Chart(ctx, {
     type: "line",
     data: {
       labels,
@@ -278,12 +281,17 @@ function getIconPath(category) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const dateValue = document.getElementById("quickDate").value; // YYYY-MM-DD
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const fullDateTime = `${dateValue} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
   const payload = {
     type: document.getElementById("typeIncome").classList.contains("active") ? "income" : "expense",
     description: document.getElementById("quickDescription").value,
     amount: document.getElementById("quickAmount").value,
     category: document.getElementById("quickCategory").value,
-    date: document.getElementById("quickDate").value,
+    date: fullDateTime,
   };
 
   try {
@@ -299,6 +307,13 @@ form.addEventListener("submit", async (e) => {
 
     message.style.color = res.ok ? "var(--accent)" : "var(--accent2)";
     message.textContent = data.message;
+
+    if (res.ok) {
+      getBalance();
+      buildLineChart();
+      buildChart();
+      fetchLastFiveTransactions();
+    }
   } catch (err) {
     message.style.color = "var(--accent2)";
     message.textContent = "Errore di connessione al server";
@@ -315,18 +330,14 @@ form.addEventListener("submit", async (e) => {
 // e la rimuove dall'altro, garantendo che uno solo sia attivo alla volta.
 document.getElementById("typeIncome").addEventListener("click", () => {
   selectedType = "income";
-  document.getElementById("typeIncome").classList.toggle("active");
-  if (document.getElementById("typeExpense").classList.contains("active")) {
-    document.getElementById("typeExpense").classList.remove("active");
-  }
+  document.getElementById("typeIncome").classList.add("active");
+  document.getElementById("typeExpense").classList.remove("active");
 });
 
 document.getElementById("typeExpense").addEventListener("click", () => {
   selectedType = "expense";
-  document.getElementById("typeExpense").classList.toggle("active");
-  if (document.getElementById("typeIncome").classList.contains("active")) {
-    document.getElementById("typeIncome").classList.remove("active");
-  }
+  document.getElementById("typeExpense").classList.add("active");
+  document.getElementById("typeIncome").classList.remove("active");
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────
