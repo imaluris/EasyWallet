@@ -17,32 +17,41 @@ exports.getSavings = async (req, res) => {
   try {
     const [goals] = await db.query(
       "SELECT * FROM savings_goals WHERE user_id = ? ORDER BY created_at DESC",
-      [userId],
+      [userId]
     );
 
-    // Subquery: raggruppa per mese, poi AVG sui totali mensili
-    const [stats] = await db.query(
-      `SELECT
-         AVG(monthly_income)  AS avg_income,
-         AVG(monthly_expense) AS avg_expense
-       FROM (
-         SELECT
-           DATE_FORMAT(date, '%Y-%m')                                    AS month,
-           SUM(CASE WHEN type = 'income'  THEN amount ELSE 0 END)        AS monthly_income,
-           SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END)        AS monthly_expense
-         FROM transaction
-         WHERE user_id = ?
-           AND date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-         GROUP BY DATE_FORMAT(date, '%Y-%m')
-       ) AS monthly`,
-      [userId],
+    // Prendo le transazioni degli ultimi 6 mesi e calcolo le medie mensili in JS
+    const [transactions] = await db.query(
+      `SELECT type, amount, DATE_FORMAT(date, '%Y-%m') AS month
+       FROM transaction
+       WHERE user_id = ? AND date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)`,
+      [userId]
     );
 
-    res.json({
-      goals,
-      avgIncome:  parseFloat(stats[0].avg_income  || 0),
-      avgExpense: parseFloat(stats[0].avg_expense || 0),
+    const monthlyTotals = {};
+    transactions.forEach((t) => {
+      if (!monthlyTotals[t.month]) {
+        monthlyTotals[t.month] = { income: 0, expense: 0 };
+      }
+      if (t.type === "income") {
+        monthlyTotals[t.month].income += parseFloat(t.amount);
+      } else {
+        monthlyTotals[t.month].expense += parseFloat(t.amount);
+      }
     });
+
+    const months = Object.keys(monthlyTotals);
+    let totalIncome = 0;
+    let totalExpense = 0;
+    months.forEach((m) => {
+      totalIncome += monthlyTotals[m].income;
+      totalExpense += monthlyTotals[m].expense;
+    });
+
+    const avgIncome = months.length > 0 ? totalIncome / months.length : 0;
+    const avgExpense = months.length > 0 ? totalExpense / months.length : 0;
+
+    res.json({ goals, avgIncome, avgExpense });
   } catch (err) {
     console.error("SAVINGS ERROR:", err);
     res.status(500).json({ error: err.message });
@@ -63,13 +72,9 @@ exports.createSaving = async (req, res) => {
   try {
     const [result] = await db.query(
       "INSERT INTO savings_goals (user_id, name, target) VALUES (?, ?, ?)",
-      [userId, name, parseFloat(target)],
+      [userId, name, parseFloat(target)]
     );
-    const [rows] = await db.query(
-      "SELECT * FROM savings_goals WHERE id = ?",
-      [result.insertId],
-    );
-    res.status(201).json(rows[0]);
+    res.status(201).json({ id: result.insertId, user_id: userId, name, target: parseFloat(target), saved: 0 });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

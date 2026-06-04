@@ -283,8 +283,7 @@ form.addEventListener("submit", async (e) => {
 
   const dateValue = document.getElementById("quickDate").value; // YYYY-MM-DD
   const now = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  const fullDateTime = `${dateValue} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const fullDateTime = `${dateValue} ${now.toTimeString().slice(0, 8)}`;
 
   const payload = {
     type: document.getElementById("typeIncome").classList.contains("active") ? "income" : "expense",

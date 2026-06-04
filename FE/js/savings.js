@@ -26,44 +26,29 @@ async function authFetch(url, options = {}) {
 
 // ─── HELPERS ──────────────────────────────────────────────────────
 // Formatta un numero come valuta in euro con 2 decimali (es. "€ 1.250,00").
-const fmt = (v) =>
-  "€ " +
-  parseFloat(v).toLocaleString("it-IT", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+function fmt(amount) {
+  return "€ " + parseFloat(amount).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 // Calcola i mesi stimati per raggiungere l'obiettivo in base al risparmio
 // mensile medio (avgIncome - avgExpense). Restituisce "∞" se non si sta
 // risparmiando, "✓ Raggiunto" se l'obiettivo è già stato centrato.
 function monthsToGoal(goal) {
-  const monthlySaving = avgIncome - avgExpense;
-  if (monthlySaving <= 0) return "∞";
-  const remaining = goal.target - goal.saved;
-  if (remaining <= 0) return "✓ Raggiunto";
-  const months = Math.ceil(remaining / monthlySaving);
-  return months + " mes" + (months === 1 ? "e" : "i");
+  const risparmioMensile = avgIncome - avgExpense;
+  if (risparmioMensile <= 0) return "∞";
+  const rimanente = goal.target - goal.saved;
+  if (rimanente <= 0) return "Raggiunto";
+  const mesi = Math.ceil(rimanente / risparmioMensile);
+  if (mesi === 1) return "1 mese";
+  return mesi + " mesi";
 }
 
-// Calcola la soglia massima di spesa mensile che l'utente può permettersi
-// per raggiungere l'obiettivo nei mesi stimati. Restituisce null se
-// l'obiettivo è già raggiunto o il risparmio mensile è insufficiente.
-function spendingThreshold(goal) {
-  const monthlySaving = avgIncome - avgExpense;
-  if (monthlySaving <= 0) return null;
-  const remaining = goal.target - goal.saved;
-  if (remaining <= 0) return null;
-  const months = Math.ceil(remaining / monthlySaving);
-  const neededPerMonth = remaining / months;
-  const threshold = avgIncome - neededPerMonth;
-  return threshold;
-}
-
-// Calcola la percentuale di completamento dell'obiettivo (0-100),
-// bloccata a 100 anche se il salvato supera il target.
+// Calcola la percentuale di completamento dell'obiettivo (0-100).
 function pct(goal) {
   if (goal.target <= 0) return 0;
-  return Math.min(100, Math.round((goal.saved / goal.target) * 100));
+  const percentuale = Math.round((goal.saved / goal.target) * 100);
+  if (percentuale > 100) return 100;
+  return percentuale;
 }
 
 // ─── RENDER CARDS ─────────────────────────────────────────────────
@@ -96,14 +81,16 @@ function render() {
     card.querySelector(".sv-progress-fill").classList.toggle("sv-progress-done", done);
     card.querySelector(".sv-forecast-value").textContent = monthsToGoal(goal);
 
-    const threshold = spendingThreshold(goal);
     const thresholdEl = card.querySelector(".sv-threshold-value");
-    if (threshold !== null) {
-      thresholdEl.textContent = "Max spese: " + fmt(threshold) + "/mese";
-    } else if (pct(goal) >= 100) {
+    if (p >= 100) {
       thresholdEl.textContent = "🏆 Obiettivo raggiunto!";
-    } else {
+    } else if (avgIncome - avgExpense <= 0) {
       thresholdEl.textContent = "Risparmio mensile insufficiente";
+    } else {
+      const rimanente = goal.target - goal.saved;
+      const mesi = Math.ceil(rimanente / (avgIncome - avgExpense));
+      const maxSpese = avgIncome - (rimanente / mesi);
+      thresholdEl.textContent = "Max spese: " + fmt(maxSpese) + "/mese";
     }
 
     if (done) {
